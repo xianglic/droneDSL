@@ -3,10 +3,10 @@ package org.steeleagle.psi;
 import com.intellij.psi.DefaultPsiParser;
 import com.intellij.psi.builder.FleetPsiBuilder;
 import com.intellij.psi.tree.IFileElementType;
-import jdk.javadoc.doclet.Reporter;
 import org.aya.intellij.GenericNode;
 import org.aya.intellij.MarkerGenericNode;
 import org.aya.util.error.SourceFile;
+import org.aya.util.reporter.Reporter;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;

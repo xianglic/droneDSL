@@ -1,5 +1,5 @@
 plugins { application }
-application.mainClass.set("org.steeleagle.cli.CliMain")
+application.mainClass.set("org.steeleagle.Main")
 
 dependencies {
   val deps: java.util.Properties by rootProject.ext

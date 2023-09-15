@@ -36,7 +36,29 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // NUMBER (PLUS NUMBER)?
+  // (PLUS | MINUS) NUMBER
+  public static boolean addNumber(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "addNumber")) return false;
+    if (!nextTokenIs(b, "<add number>", MINUS, PLUS)) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, ADD_NUMBER, "<add number>");
+    r = addNumber_0(b, l + 1);
+    r = r && consumeToken(b, NUMBER);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // PLUS | MINUS
+  private static boolean addNumber_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "addNumber_0")) return false;
+    boolean r;
+    r = consumeToken(b, PLUS);
+    if (!r) r = consumeToken(b, MINUS);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // NUMBER addNumber*
   static boolean bro(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "bro")) return false;
     if (!nextTokenIs(b, NUMBER)) return false;
@@ -48,21 +70,15 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // (PLUS NUMBER)?
+  // addNumber*
   private static boolean bro_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "bro_1")) return false;
-    bro_1_0(b, l + 1);
+    while (true) {
+      int c = current_position_(b);
+      if (!addNumber(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "bro_1", c)) break;
+    }
     return true;
-  }
-
-  // PLUS NUMBER
-  private static boolean bro_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "bro_1_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, PLUS, NUMBER);
-    exit_section_(b, m, null, r);
-    return r;
   }
 
 }

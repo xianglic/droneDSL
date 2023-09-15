@@ -14,4 +14,5 @@
   tokenTypeClass='org.steeleagle.parser.BotPsiTokenType'
 }
 
-bro ::= NUMBER (PLUS NUMBER)?
+bro ::= NUMBER addNumber*
+addNumber ::= (PLUS | MINUS) NUMBER
