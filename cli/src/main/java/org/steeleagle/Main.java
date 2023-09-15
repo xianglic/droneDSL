@@ -1,7 +1,9 @@
 package org.steeleagle;
 
+import org.steeleagle.psi.DslParserImpl;
+
 public class Main {
   public static void main(String[] args) {
-    System.out.println("114514");
+//    new DslParserImpl(new Repo)
   }
 }

@@ -1,4 +1,4 @@
-package org.steeleagle;
+package org.steeleagle.psi;
 
 import com.intellij.lang.Language;
 import org.jetbrains.annotations.NotNull;
