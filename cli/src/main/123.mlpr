@@ -1,0 +1,11 @@
+(*
+ * Created by Dependently-Typed Lambda Calculus on 2023-09-15
+ * 123
+ * Author: xianglic
+ *)
+
+let fun sbc () = "Hello 1231 World!"
+    fun xyz () = "12321"
+in
+  123123
+end
