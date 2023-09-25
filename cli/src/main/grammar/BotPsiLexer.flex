@@ -26,12 +26,26 @@ EOL=\R
 WHITE_SPACE=\s+
 
 NUMBER=[0-9]+
-
+IDENTIFIER=[α-ωa-zA-Z_][α-ωa-zA-Z0-9_'-]*
+//  SelfAdaptive        { return MISSION_SELFADAPTIVE_KW; }
 %%
 <YYINITIAL> {
   {WHITE_SPACE}       { return WHITE_SPACE; }
-  "+"                 { return PLUS; }
   {NUMBER}            { return NUMBER; }
+  Task                { return TASK_KW; }
+  Detect              { return TASK_DETECT_KW; }
+  Track               { return TASK_TRACK_KW; }
+  Mission             { return MISSION_KW; }
+  Start               { return MISSION_START_KW; }
+  {IDENTIFIER}        { return ID; }
+  "{"                 { return LBRACE; }
+  "}"                 { return RBRACE; }
+  "("                 { return LPAREN; }
+  ")"                 { return RPAREN; }
+  "["                 { return LSQUA; }
+  "]"                 { return RSQUA; }
+  ","                 { return COMMA; }
+  ":"                 { return COLON; }
 }
 
 [^] { return BAD_CHARACTER; }

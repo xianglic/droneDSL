@@ -14,5 +14,41 @@
   tokenTypeClass='org.steeleagle.parser.BotPsiTokenType'
 }
 
-bro ::= NUMBER addNumber*
-addNumber ::= (PLUS | MINUS) NUMBER
+// file structure
+file ::= task mission
+
+// defining the task
+task ::= TASK_KW <<braced task_decl*>>
+task_decl ::= (TASK_DETECT_KW | TASK_TRACK_KW) task_name task_body
+task_body ::= <<braced <<commaSep attributes>>>>
+private attributes ::= attribute*
+attribute ::=  ID <<coloned attribute_expr>>
+    //attribute expression: could be number, name, or list of waypoints
+attribute_expr ::= NUMBER | name | <<square_bracked <<commaSep <<paren waypoint>> >> >>
+waypoint ::= latitude COMMA longitude COMMA altitude
+latitude ::= NUMBER
+longitude ::= NUMBER
+altitude ::= NUMBER
+
+task_name ::= name
+name ::= ID
+
+// defining the mission
+mission ::= MISSION_KW <<braced mission_content>>
+mission_content ::= mission_start_decl
+mission_start_decl ::= MISSION_START_KW mission_start_body
+mission_start_body ::= <<braced task_name>>
+
+//| (mission_start_decl mission_self_adaptive_decl*)
+//mission_self_adaptive_decl ::= MISSION_SELFADAPTIVE_KW mission_sa_body
+
+//mission_sa_body ::= <<braced ID>> // need to modify into given when then
+
+
+// meta rules
+// we can improve the parsing by producing generically from a 'commaSep' rule
+meta coloned ::= COLON <<param>>
+meta commaSep ::= <<param>> (COMMA <<param>>) *
+meta paren ::= LPAREN <<param>> RPAREN
+meta square_bracked ::= LSQUA <<param>> RSQUA
+private meta braced ::= LBRACE <<param>> RBRACE
