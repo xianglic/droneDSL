@@ -2,11 +2,10 @@ plugins { application }
 application.mainClass.set("org.steeleagle.Main")
 
 dependencies {
-  val deps: java.util.Properties by rootProject.ext
-  api("info.picocli", "picocli", version = deps.getProperty("version.picocli"))
-  implementation("org.aya-prover", "tools", version = deps.getProperty("version.aya"))
-  implementation("org.aya-prover.upstream", "ij-parsing-core", version = deps.getProperty("version.build-util"))
-  implementation("org.aya-prover.upstream", "ij-parsing-wrapper", version = deps.getProperty("version.build-util"))
+  api(libs.picocli)
+  implementation(libs.aya.tools)
+  implementation(libs.aya.ipcore)
+  implementation(libs.aya.ipwrapper)
 }
 
 val genDir = file("src/main/gen")

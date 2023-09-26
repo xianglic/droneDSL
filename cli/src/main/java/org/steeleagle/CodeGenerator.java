@@ -41,7 +41,7 @@ public class CodeGenerator {
 
 //    String gimbalPitch = params.get("gimbal_pitch");
 //    String coords = params.get("coords");
-    StringBuilder code1 = new StringBuilder();
+    var code1 = new StringBuilder();
     code1.append("    public void move() {\n");
 
     for (var ele : waypoints) {

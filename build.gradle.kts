@@ -6,14 +6,9 @@ plugins {
   `java-library`
 }
 
-var deps: Properties by rootProject.ext
-
-deps = Properties()
-file("gradle/deps.properties").reader().use(deps::load)
-
 allprojects {
   group = "org.steeleagle"
-  version = deps.getProperty("version.project")
+  version = "1.0"
 }
 
 subprojects {
