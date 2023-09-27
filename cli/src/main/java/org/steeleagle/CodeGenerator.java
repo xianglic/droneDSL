@@ -24,18 +24,18 @@ public class CodeGenerator {
 //  }
 
   public static void generateCode(GenericNode<? extends GenericNode<?>> node) {
-
-    var gimbal_attr = node.child(TASK).child(TASK_DECL).child(TASK_BODY).child(COMMA_SEP).childrenOfType(ATTRIBUTE).toImmutableSeq().get(1);
-    var gimbal_pitch = gimbal_attr.child(COLONED).child(ATTRIBUTE_EXPR).child(NUMBER).tokenText();
+    var task = node.child(TASK).child(TASK_DECL);
+    var attr = task.child(TASK_BODY).childrenOfType(ATTRIBUTE).toImmutableSeq();
+    var gimbal_attr = attr.get(1);
+    var gimbal_pitch = gimbal_attr.child(ATTRIBUTE_EXPR).child(NUMBER).tokenText();
 
     System.out.println("gimbal_pitch :" + gimbal_pitch);
 
     List<ImmutableSeq<StringSlice>> waypoints = new ArrayList<>();
-    var waypoint_attr = node.child(TASK).child(TASK_DECL).child(TASK_BODY).child(COMMA_SEP).childrenOfType(ATTRIBUTE).toImmutableSeq().get(0);
-    var way_points = waypoint_attr.child(COLONED).child(ATTRIBUTE_EXPR).child(SQUARE_BRACKED).child(COMMA_SEP).childrenOfType(PAREN).toSeq(); // childrenOfType(WAYPOINT).toSeq();
+    var waypoint_attr = attr.get(0);
+    var way_points = waypoint_attr.child(ATTRIBUTE_EXPR).child(SQUARE_BRACKED).childrenOfType(PAREN).toSeq(); // childrenOfType(WAYPOINT).toSeq();
     for (var point : way_points) {
-      var waypoint = point.child(WAYPOINT);
-      waypoints.add(waypoint.childrenOfType(NUMBER).map(GenericNode::tokenText).toImmutableSeq());
+      waypoints.add(point.child(WAYPOINT).childrenOfType(NUMBER).map(GenericNode::tokenText).toImmutableSeq());
     }
 
 //    String gimbalPitch = params.get("gimbal_pitch");

@@ -44,8 +44,8 @@ mission_start_body ::= <<braced task_name>>
 
 // meta rules
 // we can improve the parsing by producing generically from a 'commaSep' rule
-meta coloned ::= COLON <<param>>
-meta commaSep ::= <<param>> (COMMA <<param>>) *
 meta paren ::= LPAREN <<param>> RPAREN
 meta square_bracked ::= LSQUA <<param>> RSQUA
+private meta coloned ::= COLON <<param>>
+private meta commaSep ::= <<param>> (COMMA <<param>>) *
 private meta braced ::= LBRACE <<param>> RBRACE

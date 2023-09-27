@@ -7,8 +7,6 @@ public interface BotPsiElementTypes {
 
   IElementType ATTRIBUTE = new BotPsiElementType("ATTRIBUTE");
   IElementType ATTRIBUTE_EXPR = new BotPsiElementType("ATTRIBUTE_EXPR");
-  IElementType COLONED = new BotPsiElementType("COLONED");
-  IElementType COMMA_SEP = new BotPsiElementType("COMMA_SEP");
   IElementType MISSION = new BotPsiElementType("MISSION");
   IElementType MISSION_CONTENT = new BotPsiElementType("MISSION_CONTENT");
   IElementType MISSION_START_BODY = new BotPsiElementType("MISSION_START_BODY");

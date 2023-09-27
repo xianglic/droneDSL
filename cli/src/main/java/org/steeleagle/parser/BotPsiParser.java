@@ -89,14 +89,14 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // COLON <<param>>
-  public static boolean coloned(PsiBuilder b, int l, Parser _param) {
+  static boolean coloned(PsiBuilder b, int l, Parser _param) {
     if (!recursion_guard_(b, l, "coloned")) return false;
     if (!nextTokenIs(b, COLON)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, COLON);
     r = r && _param.parse(b, l);
-    exit_section_(b, m, COLONED, r);
+    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -106,13 +106,13 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
   }
 
   // <<param>> (COMMA <<param>>) *
-  public static boolean commaSep(PsiBuilder b, int l, Parser _param) {
+  static boolean commaSep(PsiBuilder b, int l, Parser _param) {
     if (!recursion_guard_(b, l, "commaSep")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = _param.parse(b, l);
     r = r && commaSep_1(b, l + 1, _param);
-    exit_section_(b, m, COMMA_SEP, r);
+    exit_section_(b, m, null, r);
     return r;
   }
 
