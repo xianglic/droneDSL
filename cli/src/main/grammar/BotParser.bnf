@@ -25,10 +25,7 @@ private attributes ::= attribute*
 attribute ::=  ID <<coloned attribute_expr>>
     //attribute expression: could be number, name, or list of waypoints
 attribute_expr ::= NUMBER | name | <<square_bracked <<commaSep <<paren waypoint>> >> >>
-waypoint ::= latitude COMMA longitude COMMA altitude
-latitude ::= NUMBER
-longitude ::= NUMBER
-altitude ::= NUMBER
+waypoint ::= NUMBER COMMA NUMBER COMMA NUMBER
 
 task_name ::= name
 name ::= ID

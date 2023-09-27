@@ -1,5 +1,7 @@
 package org.steeleagle;
 
+import kala.collection.immutable.ImmutableSeq;
+import kala.text.StringSlice;
 import org.aya.intellij.GenericNode;
 
 import java.io.BufferedWriter;
@@ -28,26 +30,23 @@ public class CodeGenerator {
 
     System.out.println("gimbal_pitch :" + gimbal_pitch);
 
-    List<List<String>> waypoints = new ArrayList<>();
+    List<ImmutableSeq<StringSlice>> waypoints = new ArrayList<>();
     var waypoint_attr = node.child(TASK).child(TASK_DECL).child(TASK_BODY).child(COMMA_SEP).childrenOfType(ATTRIBUTE).toImmutableSeq().get(0);
     var way_points = waypoint_attr.child(COLONED).child(ATTRIBUTE_EXPR).child(SQUARE_BRACKED).child(COMMA_SEP).childrenOfType(PAREN).toSeq(); // childrenOfType(WAYPOINT).toSeq();
     for (var point : way_points) {
-      List<String> ele = new ArrayList<>();
-      ele.add(point.child(WAYPOINT).child(LATITUDE).tokenText().toString());
-      ele.add(point.child(WAYPOINT).child(LONGITUDE).tokenText().toString());
-      ele.add(point.child(WAYPOINT).child(ALTITUDE).tokenText().toString());
-      waypoints.add(ele);
+      var waypoint = point.child(WAYPOINT);
+      waypoints.add(waypoint.childrenOfType(NUMBER).map(GenericNode::tokenText).toImmutableSeq());
     }
 
 //    String gimbalPitch = params.get("gimbal_pitch");
 //    String coords = params.get("coords");
     var code1 = new StringBuilder();
-    code1.append("    public void move() {\n");
+    code1.append("  public void move() {\n");
 
     for (var ele : waypoints) {
-      code1.append(String.format("        drone.moveTo(%s, %s, %s);\n", ele.get(0), ele.get(1), ele.get(2)));
+      code1.append(String.format("    drone.moveTo(%s, %s, %s);\n", ele.get(0), ele.get(1), ele.get(2)));
     }
-    code1.append("    }\n");
+    code1.append("  }\n");
 
     String code = String.format("""
         // SPDX-FileCopyrightText: 2023 Carnegie Mellon University - Satyalab
@@ -59,14 +58,13 @@ public class CodeGenerator {
         import edu.cmu.cs.dronebrain.interfaces.DroneItf;
         import edu.cmu.cs.dronebrain.interfaces.CloudletItf;
         import edu.cmu.cs.dronebrain.interfaces.Task;
-        import java.lang.Float;
         import java.util.HashMap;
         import org.json.JSONArray;
         import org.json.JSONObject;
         import android.util.Log;
 
         public class DetectTask extends Task {
-          Double gimbal;
+          double gimbal;
           public DetectTask(DroneItf d, CloudletItf c, HashMap<String, String> k) {
             super(d, c, k);
             gimbal = %s;

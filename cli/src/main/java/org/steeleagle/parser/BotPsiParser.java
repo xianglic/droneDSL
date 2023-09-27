@@ -36,18 +36,6 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // NUMBER
-  public static boolean altitude(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "altitude")) return false;
-    if (!nextTokenIs(b, NUMBER)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, NUMBER);
-    exit_section_(b, m, ALTITUDE, r);
-    return r;
-  }
-
-  /* ********************************************************** */
   // ID <<coloned attribute_expr>>
   public static boolean attribute(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "attribute")) return false;
@@ -160,30 +148,6 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
     r = task(b, l + 1);
     r = r && mission(b, l + 1);
     exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // NUMBER
-  public static boolean latitude(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "latitude")) return false;
-    if (!nextTokenIs(b, NUMBER)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, NUMBER);
-    exit_section_(b, m, LATITUDE, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // NUMBER
-  public static boolean longitude(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "longitude")) return false;
-    if (!nextTokenIs(b, NUMBER)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, NUMBER);
-    exit_section_(b, m, LONGITUDE, r);
     return r;
   }
 
@@ -353,17 +317,13 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // latitude COMMA longitude COMMA altitude
+  // NUMBER COMMA NUMBER COMMA NUMBER
   public static boolean waypoint(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "waypoint")) return false;
     if (!nextTokenIs(b, NUMBER)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = latitude(b, l + 1);
-    r = r && consumeToken(b, COMMA);
-    r = r && longitude(b, l + 1);
-    r = r && consumeToken(b, COMMA);
-    r = r && altitude(b, l + 1);
+    r = consumeTokens(b, 0, NUMBER, COMMA, NUMBER, COMMA, NUMBER);
     exit_section_(b, m, WAYPOINT, r);
     return r;
   }

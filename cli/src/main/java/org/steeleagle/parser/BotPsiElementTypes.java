@@ -5,13 +5,10 @@ import com.intellij.psi.tree.IElementType;
 
 public interface BotPsiElementTypes {
 
-  IElementType ALTITUDE = new BotPsiElementType("ALTITUDE");
   IElementType ATTRIBUTE = new BotPsiElementType("ATTRIBUTE");
   IElementType ATTRIBUTE_EXPR = new BotPsiElementType("ATTRIBUTE_EXPR");
   IElementType COLONED = new BotPsiElementType("COLONED");
   IElementType COMMA_SEP = new BotPsiElementType("COMMA_SEP");
-  IElementType LATITUDE = new BotPsiElementType("LATITUDE");
-  IElementType LONGITUDE = new BotPsiElementType("LONGITUDE");
   IElementType MISSION = new BotPsiElementType("MISSION");
   IElementType MISSION_CONTENT = new BotPsiElementType("MISSION_CONTENT");
   IElementType MISSION_START_BODY = new BotPsiElementType("MISSION_START_BODY");
