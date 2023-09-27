@@ -4,9 +4,9 @@ import kala.collection.immutable.ImmutableSeq;
 import kala.text.StringSlice;
 import org.aya.intellij.GenericNode;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,8 +69,7 @@ public class CodeGenerator {
             super(d, c, k);
             gimbal = %s;
           }
-        """ +
-        code1 + """
+        """ + code1 + """
           @Override public void run() {
             try {
               drone.setGimbalPose(0.0, gimbal, 0.0);
@@ -87,8 +86,8 @@ public class CodeGenerator {
           @Override public void resume() {}
         }""", gimbal_pitch);
 
-    try (var writer = new BufferedWriter(new FileWriter("DetectTask.java"))) {
-      writer.write(code);
+    try {
+      Files.writeString(Paths.get("DetectTask.java"), code);
     } catch (IOException e) {
       e.printStackTrace();
     }
