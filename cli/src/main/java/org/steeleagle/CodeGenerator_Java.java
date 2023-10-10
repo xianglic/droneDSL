@@ -13,7 +13,7 @@ import java.util.List;
 import static org.steeleagle.parser.BotPsiElementTypes.*;
 
 
-public class CodeGenerator {
+public class CodeGenerator_Java {
 
 //  public static void main(String[] args) {
 //    HashMap<String, String> params = new HashMap<>();

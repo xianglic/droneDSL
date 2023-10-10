@@ -1,39 +1,32 @@
 package org.steeleagle;
-
 import org.aya.intellij.GenericNode;
 import org.jetbrains.annotations.NotNull;
 import org.steeleagle.psi.DslParserImpl;
 import org.steeleagle.psi.StreamReporter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.steeleagle.parser.BotPsiElementTypes.*;
 
 public class Main {
-  public static int translate(GenericNode<? extends GenericNode<?>> node) {
-
-
-    return 114514;
-  }
-
   public static void main(String[] args) {
     var node = parser().parseNode("""
-        Task{
-            Detect task1 {
-                waypoints: [(100, 200, 300), (200, 200, 300), (300, 200, 300), (400, 200, 300)],
-                gimbal_pitch: 20,
-                model: coco
-            }
-        }
-        
-        Mission {
-            Start { task1 }
-        }
-        """);
+      Task{
+          Detect task1 {
+              waypoints: [(100, 200, 300), (200, 200, 300), (300, 200, 300), (400, 200, 300)],
+              gimbal_pitch: 20,
+              model: coco,
+              hover_delay: 2
+          }
+      }
+      
+      Mission {
+          Start { task1 }
+      }
+      """);
     System.out.println(node.toDebugString());
-//    traverseAST(node);
-    CodeGenerator.generateCode(node);
+////    traverseAST(node);
+//    CodeGenerator_Java.generateCode(node);
+    CodeGenerator_Python.generateCode(node);
+//    CodeGenerator_Python.generateCode(node);
   }
 //   Define a method to traverse the AST recursively
   public static void traverseAST(GenericNode<? extends GenericNode<?>> node) {
