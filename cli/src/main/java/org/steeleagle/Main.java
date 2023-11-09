@@ -3,18 +3,20 @@ import org.aya.intellij.GenericNode;
 import org.jetbrains.annotations.NotNull;
 import org.steeleagle.psi.DslParserImpl;
 import org.steeleagle.psi.StreamReporter;
-
+import org.steeleagle.pythonGen.CodeGenerator_DSL_MS;
 import static org.steeleagle.parser.BotPsiElementTypes.*;
 
 public class Main {
   public static void main(String[] args) {
     var node = parser().parseNode("""
-      Task{
+      Task {
           Detect task1 {
-              waypoints: [(100, 200, 300), (200, 200, 300), (300, 200, 300), (400, 200, 300)],
-              gimbal_pitch: 20,
-              model: coco,
-              hover_delay: 2
+              waypoints: [(-80.0076661, 40.4534506, 15.0), (-80.0075856, 40.4526669, 15.0), (-80.0061211, 40.4526995, 15.0), (-80.0057885, 40.4536384, 15.0), (-80.0076661, 40.4534506, 15.0)],
+              gimbal_pitch: -45.0,
+              drone_rotation: 0.0,
+              sample_rate: 2,
+              hover_delay: 5,
+              model: coco
           }
       }
       
@@ -23,11 +25,11 @@ public class Main {
       }
       """);
     System.out.println(node.toDebugString());
-////    traverseAST(node);
-//    CodeGenerator_Java.generateCode(node);
-    CodeGenerator_Python.generateCode(node);
-//    CodeGenerator_Python.generateCode(node);
+    CodeGenerator_DSL_MS.generateCode(node);
+    ////    traverseAST(node);
+
   }
+
 //   Define a method to traverse the AST recursively
   public static void traverseAST(GenericNode<? extends GenericNode<?>> node) {
     // Check if the current node is null
