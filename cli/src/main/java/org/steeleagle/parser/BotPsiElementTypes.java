@@ -7,10 +7,11 @@ public interface BotPsiElementTypes {
 
   IElementType ATTRIBUTE = new BotPsiElementType("ATTRIBUTE");
   IElementType ATTRIBUTE_EXPR = new BotPsiElementType("ATTRIBUTE_EXPR");
+  IElementType COND = new BotPsiElementType("COND");
   IElementType MISSION = new BotPsiElementType("MISSION");
   IElementType MISSION_CONTENT = new BotPsiElementType("MISSION_CONTENT");
-  IElementType MISSION_START_BODY = new BotPsiElementType("MISSION_START_BODY");
   IElementType MISSION_START_DECL = new BotPsiElementType("MISSION_START_DECL");
+  IElementType MISSION_TRANSITION = new BotPsiElementType("MISSION_TRANSITION");
   IElementType NAME = new BotPsiElementType("NAME");
   IElementType PAREN = new BotPsiElementType("PAREN");
   IElementType SQUARE_BRACKED = new BotPsiElementType("SQUARE_BRACKED");
@@ -20,6 +21,7 @@ public interface BotPsiElementTypes {
   IElementType TASK_NAME = new BotPsiElementType("TASK_NAME");
   IElementType WAYPOINT = new BotPsiElementType("WAYPOINT");
 
+  IElementType ARROW = new BotPsiTokenType("ARROW");
   IElementType COLON = new BotPsiTokenType("COLON");
   IElementType COMMA = new BotPsiTokenType("COMMA");
   IElementType ID = new BotPsiTokenType("ID");
@@ -35,4 +37,5 @@ public interface BotPsiElementTypes {
   IElementType TASK_DETECT_KW = new BotPsiTokenType("TASK_DETECT_KW");
   IElementType TASK_KW = new BotPsiTokenType("TASK_KW");
   IElementType TASK_TRACK_KW = new BotPsiTokenType("TASK_TRACK_KW");
+  IElementType TRANSITION_KW = new BotPsiTokenType("TRANSITION_KW");
 }

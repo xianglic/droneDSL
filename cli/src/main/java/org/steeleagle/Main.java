@@ -21,13 +21,16 @@ public class Main {
                 model: coco
             }
         }
-              
         Mission {
             Start { task1 }
+            Transition (timeup(5)) task1 -> task2
+            Transition (done) task2 -> terminate
+            Transition (batteryup(78)) task2 -> terminate
         }
         """);
-    var ast = node.child(TASK).childrenOfType(TASK_DECL).map(Preparse::createTask)
-        .toImmutableSeq();
+    System.out.println(node.toDebugString());
+//    var ast = node.child(TASK).childrenOfType(TASK_DECL).map(Preparse::createTask)
+//        .toImmutableSeq();
     // CodeGeneratorPython.generateCode(ast);
     // System.out.println(node.toDebugString());
   }

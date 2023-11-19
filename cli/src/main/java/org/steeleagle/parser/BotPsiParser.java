@@ -139,6 +139,26 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // ID <<paren NUMBER>>?
+  public static boolean cond(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "cond")) return false;
+    if (!nextTokenIs(b, ID)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, ID);
+    r = r && cond_1(b, l + 1);
+    exit_section_(b, m, COND, r);
+    return r;
+  }
+
+  // <<paren NUMBER>>?
+  private static boolean cond_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "cond_1")) return false;
+    paren(b, l + 1, NUMBER_parser_);
+    return true;
+  }
+
+  /* ********************************************************** */
   // task mission
   static boolean file(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "file")) return false;
@@ -165,39 +185,55 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // mission_start_decl
+  // mission_start_decl mission_transition*
   public static boolean mission_content(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mission_content")) return false;
     if (!nextTokenIs(b, MISSION_START_KW)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = mission_start_decl(b, l + 1);
+    r = r && mission_content_1(b, l + 1);
     exit_section_(b, m, MISSION_CONTENT, r);
     return r;
   }
 
-  /* ********************************************************** */
-  // <<braced task_name>>
-  public static boolean mission_start_body(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "mission_start_body")) return false;
-    if (!nextTokenIs(b, LBRACE)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = braced(b, l + 1, BotPsiParser::task_name);
-    exit_section_(b, m, MISSION_START_BODY, r);
-    return r;
+  // mission_transition*
+  private static boolean mission_content_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mission_content_1")) return false;
+    while (true) {
+      int c = current_position_(b);
+      if (!mission_transition(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "mission_content_1", c)) break;
+    }
+    return true;
   }
 
   /* ********************************************************** */
-  // MISSION_START_KW mission_start_body
+  // MISSION_START_KW <<braced task_name>>
   public static boolean mission_start_decl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mission_start_decl")) return false;
     if (!nextTokenIs(b, MISSION_START_KW)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, MISSION_START_KW);
-    r = r && mission_start_body(b, l + 1);
+    r = r && braced(b, l + 1, BotPsiParser::task_name);
     exit_section_(b, m, MISSION_START_DECL, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // TRANSITION_KW <<paren cond>> task_name ARROW task_name
+  public static boolean mission_transition(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mission_transition")) return false;
+    if (!nextTokenIs(b, TRANSITION_KW)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, TRANSITION_KW);
+    r = r && paren(b, l + 1, BotPsiParser::cond);
+    r = r && task_name(b, l + 1);
+    r = r && consumeToken(b, ARROW);
+    r = r && task_name(b, l + 1);
+    exit_section_(b, m, MISSION_TRANSITION, r);
     return r;
   }
 
@@ -327,6 +363,8 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
     exit_section_(b, m, WAYPOINT, r);
     return r;
   }
+
+  static final Parser NUMBER_parser_ = (b, l) -> consumeToken(b, NUMBER);
 
   private static final Parser attribute_expr_2_0_0_parser_ = paren_$(BotPsiParser::waypoint);
   private static final Parser attribute_expr_2_0_parser_ = commaSep_$(attribute_expr_2_0_0_parser_);

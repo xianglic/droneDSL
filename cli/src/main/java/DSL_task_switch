@@ -20,7 +20,4 @@ Task {
 
 Mission {
     Start { task1 }
-
-    SA {task1, trigger: timeup, task2}
-    SA {task2, trigger: done, terminate}
 }

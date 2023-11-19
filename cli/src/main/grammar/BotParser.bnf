@@ -32,9 +32,11 @@ name ::= ID
 
 // defining the mission
 mission ::= MISSION_KW <<braced mission_content>>
-mission_content ::= mission_start_decl
-mission_start_decl ::= MISSION_START_KW mission_start_body
-mission_start_body ::= <<braced task_name>>
+mission_content ::= mission_start_decl mission_transition*
+mission_start_decl ::= MISSION_START_KW <<braced task_name>>
+
+mission_transition ::= TRANSITION_KW <<paren cond>> task_name ARROW task_name
+cond ::= ID <<paren NUMBER>>?
 
 //| (mission_start_decl mission_self_adaptive_decl*)
 //mission_self_adaptive_decl ::= MISSION_SELFADAPTIVE_KW mission_sa_body
