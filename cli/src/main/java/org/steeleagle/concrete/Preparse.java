@@ -1,5 +1,6 @@
 package org.steeleagle.concrete;
 
+import kala.collection.immutable.ImmutableSeq;
 import kala.collection.mutable.MutableList;
 import kala.collection.mutable.MutableMap;
 import kala.text.StringSlice;
@@ -29,15 +30,15 @@ public interface Preparse {
     var hover_delay = bro.get("hover_delay").child(NUMBER).tokenText();
     var model = bro.get("model").child(NAME).tokenText();
 
-    MutableList<DetectTask.Point> waypoints = MutableList.create();
-    var way_points = bro.get("way_points").child(SQUARE_BRACKED).childrenOfType(PAREN).toSeq(); // childrenOfType(WAYPOINT).toSeq();
-    for (var point : way_points) {
-      var nums = point.child(WAYPOINT).childrenOfType(NUMBER)
-          .map(t -> t.tokenText().toFloat());
-      waypoints.append(new DetectTask.Point(nums.get(0), nums.get(1), nums.get(2)));
-    }
+    var wayPoints = bro.get("way_points").child(SQUARE_BRACKED).childrenOfType(PAREN).
+        map(point -> {
+          var nums = point.child(WAYPOINT).childrenOfType(NUMBER)
+              .map(t -> t.tokenText().toFloat());
+          return new DetectTask.Point(nums.get(0), nums.get(1), nums.get(2));
+        })
+        .toImmutableSeq();
     var detectTask = new DetectTask(
-        waypoints.toImmutableSeq(),
+        wayPoints,
         gimbal_pitch.toFloat(),
         drone_rotation.toFloat(),
         sample_rate.toInt(),
