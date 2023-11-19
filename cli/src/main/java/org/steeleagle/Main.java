@@ -1,9 +1,12 @@
 package org.steeleagle;
 
 import org.jetbrains.annotations.NotNull;
+import org.steeleagle.concrete.Preparse;
 import org.steeleagle.psi.DslParserImpl;
 import org.steeleagle.psi.StreamReporter;
-import org.steeleagle.pythonGen.CodeGeneratorPython;
+
+import static org.steeleagle.parser.BotPsiElementTypes.TASK;
+import static org.steeleagle.parser.BotPsiElementTypes.TASK_DECL;
 
 public class Main {
   public static void main(String[] args) {
@@ -23,10 +26,10 @@ public class Main {
             Start { task1 }
         }
         """);
-    System.out.println(node.toDebugString());
-    CodeGeneratorPython.generateCode(node);
-    ////    traverseAST(node);
-
+    var ast = node.child(TASK).childrenOfType(TASK_DECL).map(Preparse::createTask)
+        .toImmutableSeq();
+    // CodeGeneratorPython.generateCode(ast);
+    // System.out.println(node.toDebugString());
   }
 
   @NotNull

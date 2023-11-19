@@ -23,8 +23,8 @@ public interface Preparse {
   }
 
   @NotNull
-  static Task createTask(GenericNode<? extends GenericNode<?>> node) {
-    var attrMap = createMap(node);
+  static Task createTask(GenericNode<? extends GenericNode<?>> task) {
+    var attrMap = createMap(task);
     return switch (attrMap.kind) {
       case Detect -> {
         var gimbal_pitch = attrMap.get("gimbal_pitch").child(NUMBER).tokenText();
@@ -56,8 +56,7 @@ public interface Preparse {
   }
 
   @NotNull
-  private static AttributeMap createMap(GenericNode<? extends GenericNode<?>> node) {
-    var task = node.child(TASK).child(TASK_DECL);
+  private static AttributeMap createMap(GenericNode<? extends GenericNode<?>> task) {
     var isDetect = task.peekChild(TASK_DETECT_KW);
     var attrMap = new AttributeMap();
     task.child(TASK_BODY).childrenOfType(ATTRIBUTE)
