@@ -25,7 +25,7 @@ import static org.steeleagle.parser.BotPsiElementTypes.*;
 EOL=\R
 WHITE_SPACE=\s+
 
-NUMBER=[0-9]+
+NUMBER=-?[0-9]+(\.[0-9]+)?
 IDENTIFIER=[α-ωa-zA-Z_][α-ωa-zA-Z0-9_'-]*
 //  SelfAdaptive        { return MISSION_SELFADAPTIVE_KW; }
 %%

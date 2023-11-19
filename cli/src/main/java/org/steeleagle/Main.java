@@ -3,7 +3,7 @@ import org.aya.intellij.GenericNode;
 import org.jetbrains.annotations.NotNull;
 import org.steeleagle.psi.DslParserImpl;
 import org.steeleagle.psi.StreamReporter;
-import org.steeleagle.pythonGen.CodeGenerator_DSL_MS;
+import org.steeleagle.pythonGen.steeleagle.CodeGenerator_DSL_MS;
 import static org.steeleagle.parser.BotPsiElementTypes.*;
 
 public class Main {

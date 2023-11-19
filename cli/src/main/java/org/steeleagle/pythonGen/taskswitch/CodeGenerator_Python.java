@@ -1,4 +1,4 @@
-package org.steeleagle;
+package org.steeleagle.pythonGen.taskswitch;
 
 import kala.collection.immutable.ImmutableSeq;
 import kala.text.StringSlice;

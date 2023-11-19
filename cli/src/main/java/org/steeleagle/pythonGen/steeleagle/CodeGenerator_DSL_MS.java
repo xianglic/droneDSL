@@ -1,4 +1,4 @@
-package org.steeleagle.pythonGen;
+package org.steeleagle.pythonGen.steeleagle;
 
 import kala.collection.immutable.ImmutableSeq;
 import kala.text.StringSlice;

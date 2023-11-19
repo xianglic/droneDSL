@@ -1,4 +1,4 @@
-package org.steeleagle;
+package org.steeleagle.javaGen;
 
 import kala.collection.immutable.ImmutableSeq;
 import kala.text.StringSlice;
