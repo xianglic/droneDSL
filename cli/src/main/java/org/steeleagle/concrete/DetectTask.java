@@ -4,7 +4,7 @@ import kala.collection.immutable.ImmutableSeq;
 import org.jetbrains.annotations.NotNull;
 
 public record DetectTask(
-    @NotNull ImmutableSeq<Point> waypoints,
+    @NotNull ImmutableSeq<Point> wayPoints,
     float gimbalPitch,
     float droneRotation,
     int sampleRate,

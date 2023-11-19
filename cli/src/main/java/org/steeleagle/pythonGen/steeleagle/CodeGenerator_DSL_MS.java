@@ -14,7 +14,7 @@ public class CodeGenerator_DSL_MS {
     var task = createTask(node);
     var wayPointsStr = new StringBuilder();
     wayPointsStr.append("[");
-    task.waypoints().joinTo(wayPointsStr, ", ", DetectTask.Point::toJson);
+    task.wayPoints().joinTo(wayPointsStr, ", ", DetectTask.Point::toJson);
     wayPointsStr.append("]");
 
     String code = String.format("""

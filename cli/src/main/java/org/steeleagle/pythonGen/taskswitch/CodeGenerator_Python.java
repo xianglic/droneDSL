@@ -13,7 +13,7 @@ public class CodeGenerator_Python {
 
     var code1 = new StringBuilder();
     code1.append("  def move() :\n");
-    for (var ele : task.waypoints()) {
+    for (var ele : task.wayPoints()) {
       code1.append(String.format("    self.drone.moveTo(%s, %s, %s)\n", ele.x(), ele.y(), ele.z()));
       code1.append(String.format("    time.sleep(%s)\n", task.hoverDelay()));
     }
