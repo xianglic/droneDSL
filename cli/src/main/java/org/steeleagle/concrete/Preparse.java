@@ -8,9 +8,14 @@ import org.jetbrains.annotations.NotNull;
 import static org.steeleagle.parser.BotPsiElementTypes.*;
 
 public interface Preparse {
+  enum TaskKind {
+    Detect,
+    Track;
+  }
+
   class AttributeMap {
     MutableMap<StringSlice, GenericNode<? extends GenericNode<?>>> content = MutableMap.create();
-    boolean isDetect;
+    TaskKind kind;
 
     public GenericNode<? extends GenericNode<?>> get(String name) {
       return content.get(StringSlice.of(name));
@@ -20,33 +25,34 @@ public interface Preparse {
   @NotNull
   static Task createTask(GenericNode<? extends GenericNode<?>> node) {
     var attrMap = createMap(node);
-    if (attrMap.isDetect) {
-      var gimbal_pitch = attrMap.get("gimbal_pitch").child(NUMBER).tokenText();
-      var drone_rotation = attrMap.get("drone_rotation").child(NUMBER).tokenText();
-      var sample_rate = attrMap.get("sample_rate").child(NUMBER).tokenText();
-      var hover_delay = attrMap.get("hover_delay").child(NUMBER).tokenText();
-      var model = attrMap.get("model").child(NAME).tokenText();
+    return switch (attrMap.kind) {
+      case Detect -> {
+        var gimbal_pitch = attrMap.get("gimbal_pitch").child(NUMBER).tokenText();
+        var drone_rotation = attrMap.get("drone_rotation").child(NUMBER).tokenText();
+        var sample_rate = attrMap.get("sample_rate").child(NUMBER).tokenText();
+        var hover_delay = attrMap.get("hover_delay").child(NUMBER).tokenText();
+        var model = attrMap.get("model").child(NAME).tokenText();
 
-      var wayPoints = attrMap.get("way_points").child(SQUARE_BRACKED).childrenOfType(PAREN).
-          map(point -> {
-            var nums = point.child(WAYPOINT).childrenOfType(NUMBER)
-                .map(t -> t.tokenText().toFloat())
-                .toImmutableSeq();
-            return new DetectTask.Point(nums.get(0), nums.get(1), nums.get(2));
-          })
-          .toImmutableSeq();
+        var wayPoints = attrMap.get("way_points").child(SQUARE_BRACKED).childrenOfType(PAREN).
+            map(point -> {
+              var nums = point.child(WAYPOINT).childrenOfType(NUMBER)
+                  .map(t -> t.tokenText().toFloat())
+                  .toImmutableSeq();
+              return new DetectTask.Point(nums.get(0), nums.get(1), nums.get(2));
+            })
+            .toImmutableSeq();
 
-      return new DetectTask(
-          wayPoints,
-          gimbal_pitch.toFloat(),
-          drone_rotation.toFloat(),
-          sample_rate.toInt(),
-          hover_delay.toFloat(),
-          model.toString()
-      );
-    } else {
-      throw new UnsupportedOperationException("TODO");
-    }
+        yield new DetectTask(
+            wayPoints,
+            gimbal_pitch.toFloat(),
+            drone_rotation.toFloat(),
+            sample_rate.toInt(),
+            hover_delay.toFloat(),
+            model.toString()
+        );
+      }
+      case Track -> throw new UnsupportedOperationException();
+    };
   }
 
   @NotNull
@@ -56,7 +62,11 @@ public interface Preparse {
     var attrMap = new AttributeMap();
     task.child(TASK_BODY).childrenOfType(ATTRIBUTE)
         .forEach(attr -> attrMap.content.put(attr.child(ID).tokenText(), attr.child(ATTRIBUTE_EXPR)));
-    attrMap.isDetect = isDetect != null;
+    if (isDetect != null) {
+      attrMap.kind = TaskKind.Detect;
+    } else {
+      attrMap.kind = TaskKind.Track;
+    }
     return attrMap;
   }
 
