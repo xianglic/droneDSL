@@ -20,4 +20,4 @@ lombok.config
 test.aya
 
 DSL-MS.py
-DetectTask.java
+/DetectTask.java
