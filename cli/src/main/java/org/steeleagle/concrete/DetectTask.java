@@ -1,7 +1,6 @@
 package org.steeleagle.concrete;
 
 import kala.collection.immutable.ImmutableSeq;
-import org.jetbrains.annotations.NotNull;
 
 public class DetectTask extends Task {
   public float gimbalPitch;
@@ -28,8 +27,17 @@ public class DetectTask extends Task {
   }
 
   @Override
-  public StringBuilder codeGenPython(@NotNull StringBuilder builder) {
-
-    return builder;
+  public String initCode(String key) {
+    return """
+            # TASK%s
+            kwargs.clear()
+            kwargs["gimbal_pitch"] = %s
+            kwargs["drone_rotation"] = %s
+            kwargs["sample_rate"] = %s
+            kwargs["hover_delay"] = %s
+            kwargs["coords"] = %s
+            self.%s = DetectTask(self.drone, %s, event_queue, **kwargs)
+            self.taskMap[%s] = self.%s
+        """.formatted(key, gimbalPitch, droneRotation, sampleRate, hoverDelay, wayPointsString(), key, key, key, key);
   }
 }

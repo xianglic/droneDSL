@@ -9,10 +9,10 @@ import java.nio.file.Paths;
 
 public class CodeGeneratorPython {
   public static void generateCode(AST ast) {
-//    try {
-//      Files.writeString(Paths.get("DetectTask.py"), .codeGenPython(new StringBuilder()));
-//    } catch (IOException e) {
-//      e.printStackTrace();
-//    }
+    try {
+      Files.writeString(Paths.get("DetectTask.py"), ast.codeGenPython(new StringBuilder()));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 }

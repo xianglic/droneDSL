@@ -25,5 +25,5 @@ public abstract class Task {
   }
 
   public abstract void debugPrint();
-  public abstract StringBuilder codeGenPython(@NotNull StringBuilder builder);
+  public abstract String initCode(String key);
 }

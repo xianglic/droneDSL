@@ -69,7 +69,7 @@ public interface Preparse {
 
     List<Transition> transitionList = new ArrayList<>();
     for (var transition : missionContent.childrenOfType(MISSION_TRANSITION)) {
-      var cond = transition.child(COND);
+      var cond = transition.child(PAREN).child(COND);
       var condId = cond.child(ID).tokenText();
       var argNode = cond.peekChild(PAREN);
       var arg = argNode != null ? argNode.child(NUMBER).tokenText().toString() : null;
