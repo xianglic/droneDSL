@@ -1,27 +1,16 @@
 package org.steeleagle.concrete;
 
-import java.util.ArrayList;
+import kala.text.StringSlice;
+import org.jetbrains.annotations.Nullable;
 
-public class Mission {
-  public static class Transition {
+import java.util.List;
 
-    public String triggeredEvent;
-    public String currentTaskID;
-    public String nextTaskID;
-
-    public Transition(String triggeredEvent, String currentTaskID, String nextTaskID) {
-      this.triggeredEvent = triggeredEvent;
-      this.currentTaskID = currentTaskID;
-      this.nextTaskID = nextTaskID;
-    }
+public record Mission(String startTaskID, List<Transition> transitionList) {
+  public record Transition(
+      StringSlice condId,
+      @Nullable String triggeredEvent,
+      String currentTaskID,
+      String nextTaskID
+  ) {
   }
-
-  public String startTaskID;
-  public ArrayList<Transition> transitionList;
-
-  public Mission(String startTaskID, ArrayList<Transition> transitionList) {
-    this.startTaskID = startTaskID;
-    this.transitionList = transitionList;
-  }
-
 }

@@ -2,15 +2,21 @@ package org.steeleagle.concrete;
 
 import kala.collection.mutable.MutableMap;
 import kala.text.StringSlice;
+import kala.tuple.Tuple;
+import kala.tuple.Tuple2;
 import org.aya.intellij.GenericNode;
 import org.jetbrains.annotations.NotNull;
+import org.steeleagle.concrete.Mission.Transition;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.steeleagle.parser.BotPsiElementTypes.*;
 
 public interface Preparse {
   enum TaskKind {
     Detect,
-    Track;
+    Track
   }
 
   class AttributeMap {
@@ -23,9 +29,9 @@ public interface Preparse {
   }
 
   @NotNull
-  static Task createTask(GenericNode<? extends GenericNode<?>> task) {
+  static Tuple2<StringSlice, Task> createTask(GenericNode<? extends GenericNode<?>> task) {
     var attrMap = createMap(task);
-    String taskID  = task.child(TASK_NAME).toString();
+    var taskID = task.child(TASK_NAME).tokenText();
     return switch (attrMap.kind) {
       case Detect -> {
         var gimbal_pitch = attrMap.get("gimbal_pitch").child(NUMBER).tokenText();
@@ -43,8 +49,7 @@ public interface Preparse {
             })
             .toImmutableSeq();
 
-        yield new DetectTask(
-            taskID,
+        var detectTask = new DetectTask(
             wayPoints,
             gimbal_pitch.toFloat(),
             drone_rotation.toFloat(),
@@ -52,19 +57,34 @@ public interface Preparse {
             hover_delay.toFloat(),
             model.toString()
         );
+        yield Tuple.of(taskID, detectTask);
       }
       case Track -> throw new UnsupportedOperationException();
     };
   }
 
   static Mission createMission(GenericNode<? extends GenericNode<?>> missionContent) {
-    String startTaskID = missionContent.child(MISSION_START_DECL).child(TASK_NAME).toString();
 
-    for(var transition: missionContent.childrenOfType(MISSION_TRANSITION)){
-        var cond = transition.child(COND);
+    var startTaskID = missionContent.child(MISSION_START_DECL).child(TASK_NAME).tokenText().toString();
 
+    List<Transition> transitionList = new ArrayList<>();
+    for (var transition : missionContent.childrenOfType(MISSION_TRANSITION)) {
+      var cond = transition.child(COND);
+      var condId = cond.child(ID).tokenText();
+      var argNode = cond.peekChild(PAREN);
+      var arg = argNode != null ? argNode.child(NUMBER).tokenText().toString() : null;
+
+      var taskPair = transition.childrenOfType(TASK_NAME)
+          .map(GenericNode::tokenText)
+          .map(StringSlice::toString)
+          .toImmutableSeq();
+      var curr_task = taskPair.get(0);
+      var next_task = taskPair.get(1);
+
+      transitionList.add(new Transition(condId, arg, curr_task, next_task));
     }
-    throw new UnsupportedOperationException();
+
+    return new Mission(startTaskID, transitionList);
   }
 
   @NotNull

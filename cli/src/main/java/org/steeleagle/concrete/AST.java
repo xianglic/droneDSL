@@ -1,11 +1,7 @@
 package org.steeleagle.concrete;
 
-import kala.collection.immutable.ImmutableSeq;
+import kala.collection.immutable.ImmutableMap;
+import kala.text.StringSlice;
 
-public class AST {
-  public ImmutableSeq<Task> taskList;
-
-  public AST(ImmutableSeq<Task> taskList){
-    this.taskList = taskList;
-  }
+public record AST(ImmutableMap<StringSlice, Task> taskList, Mission mission) {
 }

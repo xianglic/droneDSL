@@ -2,7 +2,6 @@ package org.steeleagle.concrete;
 
 import kala.collection.immutable.ImmutableSeq;
 import org.jetbrains.annotations.NotNull;
-import picocli.CommandLine;
 
 public class DetectTask extends Task {
   public float gimbalPitch;
@@ -11,8 +10,8 @@ public class DetectTask extends Task {
   public float hoverDelay;
   public String model;
 
-  public DetectTask(String taskID, ImmutableSeq<Point> wayPoints, float gimbalPitch, float droneRotation, int sampleRate, float hoverDelay, String model) {
-    super(taskID, wayPoints);
+  public DetectTask(ImmutableSeq<Point> wayPoints, float gimbalPitch, float droneRotation, int sampleRate, float hoverDelay, String model) {
+    super(wayPoints);
     this.gimbalPitch = gimbalPitch;
     this.droneRotation = droneRotation;
     this.sampleRate = sampleRate;

@@ -1,11 +1,13 @@
 package org.steeleagle;
 
+import kala.collection.immutable.ImmutableMap;
 import org.jetbrains.annotations.NotNull;
 import org.steeleagle.concrete.AST;
 import org.steeleagle.concrete.Preparse;
 import org.steeleagle.concrete.Task;
 import org.steeleagle.psi.DslParserImpl;
 import org.steeleagle.psi.StreamReporter;
+import org.steeleagle.pythonGen.CodeGeneratorPython;
 
 import java.util.ArrayList;
 
@@ -33,17 +35,10 @@ public class Main {
         """);
     System.out.println(node.toDebugString());
 
+    var ast = new AST(ImmutableMap.from(node.child(TASK).childrenOfType(TASK_DECL).map(Preparse::createTask)),
+        Preparse.createMission(node.child(MISSION).child(MISSION_CONTENT)));
 
-
-    var taskList = node.child(TASK).childrenOfType(TASK_DECL).map(Preparse::createTask)
-        .toImmutableSeq();
-
-    var ast = new AST(taskList);
-
-    // CodeGeneratorPython.generateCode(ast);
-
-
-    var mission  = Preparse.createMission(node.child(MISSION).child(MISSION_CONTENT));
+    CodeGeneratorPython.generateCode(ast);
     // System.out.println(node.toDebugString());
   }
 
