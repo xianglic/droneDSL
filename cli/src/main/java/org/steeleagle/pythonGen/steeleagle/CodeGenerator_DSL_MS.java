@@ -11,10 +11,10 @@ import static org.steeleagle.concrete.Preparse.createTask;
 
 public class CodeGenerator_DSL_MS {
   public static void generateCode(GenericNode<? extends GenericNode<?>> node) {
-    var detectTask = createTask(node);
+    var task = createTask(node);
     var wayPointsStr = new StringBuilder();
     wayPointsStr.append("[");
-    detectTask.waypoints().joinTo(wayPointsStr, ", ", DetectTask.Point::toJson);
+    task.waypoints().joinTo(wayPointsStr, ", ", DetectTask.Point::toJson);
     wayPointsStr.append("]");
 
     String code = String.format("""
@@ -46,8 +46,8 @@ public class CodeGenerator_DSL_MS {
                     self._execLoop()
                 except Exception as e:
                     print(e)
-            """, detectTask.gimbalPitch(), detectTask.droneRotation(),
-        detectTask.sampleRate(), detectTask.hoverDelay(), detectTask.model(),
+            """, task.gimbalPitch(), task.droneRotation(),
+        task.sampleRate(), task.hoverDelay(), task.model(),
         wayPointsStr);
     try {
       Files.writeString(Paths.get("DSL-MS.py"), code);
