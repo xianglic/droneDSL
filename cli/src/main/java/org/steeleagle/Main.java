@@ -1,12 +1,15 @@
 package org.steeleagle;
 
 import org.jetbrains.annotations.NotNull;
+import org.steeleagle.concrete.AST;
 import org.steeleagle.concrete.Preparse;
+import org.steeleagle.concrete.Task;
 import org.steeleagle.psi.DslParserImpl;
 import org.steeleagle.psi.StreamReporter;
 
-import static org.steeleagle.parser.BotPsiElementTypes.TASK;
-import static org.steeleagle.parser.BotPsiElementTypes.TASK_DECL;
+import java.util.ArrayList;
+
+import static org.steeleagle.parser.BotPsiElementTypes.*;
 
 public class Main {
   public static void main(String[] args) {
@@ -29,9 +32,18 @@ public class Main {
         }
         """);
     System.out.println(node.toDebugString());
-//    var ast = node.child(TASK).childrenOfType(TASK_DECL).map(Preparse::createTask)
-//        .toImmutableSeq();
+
+
+
+    var taskList = node.child(TASK).childrenOfType(TASK_DECL).map(Preparse::createTask)
+        .toImmutableSeq();
+
+    var ast = new AST(taskList);
+
     // CodeGeneratorPython.generateCode(ast);
+
+
+    var mission  = Preparse.createMission(node.child(MISSION).child(MISSION_CONTENT));
     // System.out.println(node.toDebugString());
   }
 

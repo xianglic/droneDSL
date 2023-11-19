@@ -11,8 +11,8 @@ public class DetectTask extends Task {
   public float hoverDelay;
   public String model;
 
-  public DetectTask(ImmutableSeq<Point> wayPoints, float gimbalPitch, float droneRotation, int sampleRate, float hoverDelay, String model) {
-    super(wayPoints);
+  public DetectTask(String taskID, ImmutableSeq<Point> wayPoints, float gimbalPitch, float droneRotation, int sampleRate, float hoverDelay, String model) {
+    super(taskID, wayPoints);
     this.gimbalPitch = gimbalPitch;
     this.droneRotation = droneRotation;
     this.sampleRate = sampleRate;

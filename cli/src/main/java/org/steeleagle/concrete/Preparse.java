@@ -25,6 +25,7 @@ public interface Preparse {
   @NotNull
   static Task createTask(GenericNode<? extends GenericNode<?>> task) {
     var attrMap = createMap(task);
+    String taskID  = task.child(TASK_NAME).toString();
     return switch (attrMap.kind) {
       case Detect -> {
         var gimbal_pitch = attrMap.get("gimbal_pitch").child(NUMBER).tokenText();
@@ -43,6 +44,7 @@ public interface Preparse {
             .toImmutableSeq();
 
         yield new DetectTask(
+            taskID,
             wayPoints,
             gimbal_pitch.toFloat(),
             drone_rotation.toFloat(),
@@ -53,6 +55,16 @@ public interface Preparse {
       }
       case Track -> throw new UnsupportedOperationException();
     };
+  }
+
+  static Mission createMission(GenericNode<? extends GenericNode<?>> missionContent) {
+    String startTaskID = missionContent.child(MISSION_START_DECL).child(TASK_NAME).toString();
+
+    for(var transition: missionContent.childrenOfType(MISSION_TRANSITION)){
+        var cond = transition.child(COND);
+
+    }
+    throw new UnsupportedOperationException();
   }
 
   @NotNull

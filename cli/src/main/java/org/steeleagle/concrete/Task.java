@@ -6,7 +6,10 @@ import org.jetbrains.annotations.NotNull;
 public abstract class Task {
   public ImmutableSeq<Point> wayPoints;
 
-  public Task(ImmutableSeq<Point> wayPoints) {
+  public String taskID;
+
+  public Task(String taskID, ImmutableSeq<Point> wayPoints) {
+    this.taskID = taskID;
     this.wayPoints = wayPoints;
   }
 
