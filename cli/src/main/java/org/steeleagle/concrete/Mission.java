@@ -9,7 +9,7 @@ public record Mission(String startTaskID, List<Transition> transitionList) {
 
   public record Transition(
       StringSlice condId,
-      @Nullable String triggeredEvent,
+      @Nullable String condArg,
       String currentTaskID,
       String nextTaskID
   ) {

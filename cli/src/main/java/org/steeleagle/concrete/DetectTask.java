@@ -27,17 +27,17 @@ public class DetectTask extends Task {
   }
 
   @Override
-  public String initCode(String key) {
+  public String generateDefineTaskCode(String key) {
     return """
             # TASK%s
             kwargs.clear()
-            kwargs["gimbal_pitch"] = %s
-            kwargs["drone_rotation"] = %s
-            kwargs["sample_rate"] = %s
-            kwargs["hover_delay"] = %s
-            kwargs["coords"] = %s
-            self.%s = DetectTask(self.drone, %s, event_queue, **kwargs)
-            self.taskMap[%s] = self.%s
+            kwargs["gimbal_pitch"] = "%s"
+            kwargs["drone_rotation"] = "%s"
+            kwargs["sample_rate"] = "%s"
+            kwargs["hover_delay"] = "%s"
+            kwargs["coords"] = "%s"
+            self.%s = DetectTask(self.drone, "%s", event_queue, **kwargs)
+            self.taskMap["%s"] = self.%s
         """.formatted(key, gimbalPitch, droneRotation, sampleRate, hoverDelay, wayPointsString(), key, key, key, key);
   }
 }

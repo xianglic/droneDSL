@@ -37,6 +37,4 @@ Task {
 Mission {
     Start { task1 }
     Transition (timeup(5)) task1 -> task2
-    Transition (done) task2 -> terminate
-    Transition (batteryup(78)) task2 -> terminate
 }

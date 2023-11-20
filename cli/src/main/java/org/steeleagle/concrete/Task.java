@@ -25,5 +25,5 @@ public abstract class Task {
   }
 
   public abstract void debugPrint();
-  public abstract String initCode(String key);
+  public abstract String generateDefineTaskCode(String key);
 }
