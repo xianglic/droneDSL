@@ -1,5 +1,4 @@
 build/
-out/
 /.idea/*.xml
 /.idea/.gitignore
 /.idea/modules/*
@@ -17,6 +16,7 @@ gradle.properties
 .DS_Store
 lombok.config
 
+output/
 test.aya
 
 DSL-MS.py
