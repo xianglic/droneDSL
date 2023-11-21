@@ -9,8 +9,8 @@ public class DetectTask extends Task {
   public float hoverDelay;
   public String model;
 
-  public DetectTask(ImmutableSeq<Point> wayPoints, float gimbalPitch, float droneRotation, int sampleRate, float hoverDelay, String model) {
-    super(wayPoints);
+  public DetectTask(String taskID, ImmutableSeq<Point> wayPoints, float gimbalPitch, float droneRotation, int sampleRate, float hoverDelay, String model) {
+    super(taskID, wayPoints);
     this.gimbalPitch = gimbalPitch;
     this.droneRotation = droneRotation;
     this.sampleRate = sampleRate;
@@ -27,7 +27,7 @@ public class DetectTask extends Task {
   }
 
   @Override
-  public String generateDefineTaskCode(String key) {
+  public String generateDefineTaskCode() {
     return """
             # TASK%s
             kwargs.clear()
@@ -38,6 +38,6 @@ public class DetectTask extends Task {
             kwargs["coords"] = "%s"
             self.%s = DetectTask(self.drone, "%s", event_queue, **kwargs)
             self.taskMap["%s"] = self.%s
-        """.formatted(key, gimbalPitch, droneRotation, sampleRate, hoverDelay, wayPointsString(), key, key, key, key);
+        """.formatted(taskID, gimbalPitch, droneRotation, sampleRate, hoverDelay, wayPointsString(), taskID, taskID, taskID, taskID);
   }
 }

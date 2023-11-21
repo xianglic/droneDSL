@@ -1,6 +1,7 @@
 package org.steeleagle;
 
 import kala.collection.immutable.ImmutableMap;
+import kala.text.StringSlice;
 import org.jetbrains.annotations.NotNull;
 import org.steeleagle.concrete.AST;
 import org.steeleagle.concrete.Preparse;
@@ -8,8 +9,6 @@ import org.steeleagle.concrete.Task;
 import org.steeleagle.psi.DslParserImpl;
 import org.steeleagle.psi.StreamReporter;
 import org.steeleagle.pythonGen.CodeGeneratorPython;
-
-import java.util.ArrayList;
 
 import static org.steeleagle.parser.BotPsiElementTypes.*;
 
@@ -28,15 +27,15 @@ public class Main {
         }
         Mission {
             Start { task1 }
-            Transition (timeup(5)) task1 -> task2
-            Transition (done) task2 -> terminate
-            Transition (batteryup(78)) task2 -> terminate
+            Transition (timeout(5)) task1 -> task2
         }
         """);
     System.out.println(node.toDebugString());
 
-    var ast = new AST(ImmutableMap.from(node.child(TASK).childrenOfType(TASK_DECL).map(Preparse::createTask)),
-        Preparse.createMission(node.child(MISSION).child(MISSION_CONTENT)));
+    ImmutableMap<String, Task> taskMap = ImmutableMap.from(node.child(TASK).childrenOfType(TASK_DECL).map(Preparse::createTask));
+
+    var startTaskID = Preparse.createMission(node.child(MISSION).child(MISSION_CONTENT), taskMap);
+    var ast = new AST(startTaskID, taskMap);
 
     CodeGeneratorPython.generateCode(ast);
     // System.out.println(node.toDebugString());

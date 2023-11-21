@@ -1,12 +1,13 @@
 package org.steeleagle.concrete;
 
+import kala.collection.immutable.ImmutableMap;
 import kala.collection.mutable.MutableMap;
 import kala.text.StringSlice;
 import kala.tuple.Tuple;
 import kala.tuple.Tuple2;
 import org.aya.intellij.GenericNode;
 import org.jetbrains.annotations.NotNull;
-import org.steeleagle.concrete.Mission.Transition;
+import org.steeleagle.concrete.Task.Transition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,9 +30,9 @@ public interface Preparse {
   }
 
   @NotNull
-  static Tuple2<StringSlice, Task> createTask(GenericNode<? extends GenericNode<?>> task) {
+  static Tuple2<String, Task> createTask(GenericNode<? extends GenericNode<?>> task) {
     var attrMap = createMap(task);
-    var taskID = task.child(TASK_NAME).tokenText();
+    var taskID = task.child(TASK_NAME).tokenText().toString();
     return switch (attrMap.kind) {
       case Detect -> {
         var gimbal_pitch = attrMap.get("gimbal_pitch").child(NUMBER).tokenText();
@@ -50,6 +51,7 @@ public interface Preparse {
             .toImmutableSeq();
 
         var detectTask = new DetectTask(
+            taskID,
             wayPoints,
             gimbal_pitch.toFloat(),
             drone_rotation.toFloat(),
@@ -63,14 +65,13 @@ public interface Preparse {
     };
   }
 
-  static Mission createMission(GenericNode<? extends GenericNode<?>> missionContent) {
+  static String createMission(GenericNode<? extends GenericNode<?>> missionContent, ImmutableMap<String, Task> taskMap) {
 
     var startTaskID = missionContent.child(MISSION_START_DECL).child(TASK_NAME).tokenText().toString();
 
-    List<Transition> transitionList = new ArrayList<>();
     for (var transition : missionContent.childrenOfType(MISSION_TRANSITION)) {
       var cond = transition.child(PAREN).child(COND);
-      var condId = cond.child(ID).tokenText();
+      var condId = cond.child(ID).tokenText().toString();
       var argNode = cond.peekChild(PAREN);
       var arg = argNode != null ? argNode.child(NUMBER).tokenText().toString() : null;
 
@@ -81,10 +82,11 @@ public interface Preparse {
       var curr_task = taskPair.get(0);
       var next_task = taskPair.get(1);
 
-      transitionList.add(new Transition(condId, arg, curr_task, next_task));
+      var tran = new Transition(condId, arg, curr_task, next_task);
+      taskMap.get(curr_task).transitions.add(tran);
     }
 
-    return new Mission(startTaskID, transitionList);
+    return startTaskID;
   }
 
   @NotNull

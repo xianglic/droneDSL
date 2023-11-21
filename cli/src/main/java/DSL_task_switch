@@ -36,5 +36,5 @@ Task {
 
 Mission {
     Start { task1 }
-    Transition (timeup(5)) task1 -> task2
+    Transition (timeout(5)) task1 -> task2
 }
