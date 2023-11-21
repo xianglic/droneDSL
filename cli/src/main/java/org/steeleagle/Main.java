@@ -22,29 +22,20 @@ public class Main {
                 drone_rotation: 0.0,
                 sample_rate: 2,
                 hover_delay: 5
-                model: none
-            }
-        
-            Detect task2 {
-                way_points: [(-79.9504218, 40.4155937, 50.0), (-79.9505123, 40.4155293, 50.0), (-79.9503849, 40.4155059, 50.0), (-79.9504218, 40.4155937, 50.0)],
-                gimbal_pitch: -45.0,
-                drone_rotation: 0.0,
-                sample_rate: 2,
-                hover_delay: 5
-                model: none
+                model: coco
             }
         }
-        
+
         Mission {
             Start { task1 }
-            Transition (timeout(90)) task1 -> task2
         }
         """);
     System.out.println(node.toDebugString());
 
     ImmutableMap<String, Task> taskMap = ImmutableMap.from(node.child(TASK).childrenOfType(TASK_DECL).map(Preparse::createTask));
     var startTaskID = Preparse.createMission(node.child(MISSION).child(MISSION_CONTENT), taskMap);
-    var ast = new AST(startTaskID, taskMap);
+    int isSteelEagle = 1;
+    var ast = new AST(startTaskID, taskMap, isSteelEagle);
 
     CodeGeneratorPython.generateCode(ast);
     // System.out.println(node.toDebugString());

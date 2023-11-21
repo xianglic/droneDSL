@@ -47,5 +47,5 @@ public abstract class Task {
   }
 
   public abstract void debugPrint();
-  public abstract String generateDefineTaskCode();
+  public abstract String generateDefineTaskCode(int isSteelEagle);
 }

@@ -11,26 +11,60 @@ import java.util.Objects;
 
 public final class AST {
   private final ImmutableMap<String, Task> taskMap;
+  private final int isSteelEagle;
   public String startTaskID;
 
-  public AST(String startTaskID, ImmutableMap<String, Task> taskMap) {
+  public AST(String startTaskID, ImmutableMap<String, Task> taskMap, int isSteelEagle) {
     this.startTaskID = startTaskID;
     this.taskMap = taskMap;
+    this.isSteelEagle = isSteelEagle;
   }
-
-
 
   public void codeGenPython() throws IOException {
-    String missionRunnerPath = "./output/MissionRunner.py";
-    Files.writeString(Paths.get(missionRunnerPath), missionRunnerContent());
 
-    String taskControllerPath = "./output/TaskController.py";
-    Files.writeString(Paths.get(taskControllerPath), taskControllerContent());
+    if (this.isSteelEagle == 0){
+      String missionRunnerPath = "./output/task-switch/MissionRunner.py";
+      Files.writeString(Paths.get(missionRunnerPath), missionRunnerContent());
 
-    String detectTaskPath = "./output/DetectTask.py";
-    Files.writeString(Paths.get(detectTaskPath), detectTaskContent());
+      String taskControllerPath = "./output/task-switch/TaskController.py";
+      Files.writeString(Paths.get(taskControllerPath), taskControllerContent());
+
+      String detectTaskPath = "./output/task-switch/DetectTask.py";
+      Files.writeString(Paths.get(detectTaskPath), detectTaskContent());
+    }else{
+      String MSPath = "./output/steel-eagle/MS.py";
+      Files.writeString(Paths.get(MSPath), MSContent());
+    }
+
   }
 
+  private String MSContent(){
+
+    return String.format("""
+        from interfaces.FlightScript import FlightScript
+        # Import derived tasks
+        from task_defs.DetectTask import DetectTask
+        
+        class MS(FlightScript):
+        
+            def __init__(self, drone, cloudlet):
+                super().__init__(drone, cloudlet)
+        
+            def run(self):
+                try:
+                    kwargs = {}
+                    # Detect/DetectTask START
+                    """+ taskMap.get(startTaskID).generateDefineTaskCode(this.isSteelEagle)+"""
+                    t = DetectTask(self.drone, self.cloudlet, **kwargs)
+                    self.taskQueue.put(t)
+                    print("Added task DetectTask to the queue")
+        
+                    self.drone.takeOff()
+                    self._execLoop()
+                except Exception as e:
+                    print(e)
+        """);
+  }
 
   private String detectTaskContent() {
 
@@ -194,7 +228,7 @@ public final class AST {
     taskMap.forEach((taskID, taskContent) -> {
       // Example of what you might want to append
       initContent.append(String.format("        self.%s = None\n", taskID));
-      defineTaskContent.append(taskContent.generateDefineTaskCode());
+      defineTaskContent.append(taskContent.generateDefineTaskCode(this.isSteelEagle));
     });
 
     return String.format(

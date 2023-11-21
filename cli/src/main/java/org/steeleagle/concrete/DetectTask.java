@@ -27,8 +27,9 @@ public class DetectTask extends Task {
   }
 
   @Override
-  public String generateDefineTaskCode() {
-    return """
+  public String generateDefineTaskCode(int isSteelEagle) {
+    if (isSteelEagle == 0){
+      return """
                 # TASK%s
                 kwargs.clear()
                 kwargs["gimbal_pitch"] = "%s"
@@ -39,5 +40,20 @@ public class DetectTask extends Task {
                 self.%s = DetectTask(self.drone, "%s", event_queue, **kwargs)
                 self.taskMap["%s"] = self.%s
         """.formatted(taskID, gimbalPitch, droneRotation, sampleRate, hoverDelay, wayPointsString(), taskID, taskID, taskID, taskID);
-  }
+    }else{
+      return """
+                      # TASK%s
+                      kwargs.clear()
+                      kwargs["gimbal_pitch"] = "%s"
+                      kwargs["drone_rotation"] = "%s"
+                      kwargs["sample_rate"] = "%s"
+                      kwargs["hover_delay"] = "%s"
+                      kwargs["coords"] = "%s"
+                      kwargs["model"] = "%s"
+          """.formatted(taskID, gimbalPitch, droneRotation, sampleRate, hoverDelay, wayPointsString(), model);
+    }
+
+    }
+
+
 }
