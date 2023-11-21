@@ -6,10 +6,10 @@ public class DetectTask extends Task {
   public float gimbalPitch;
   public float droneRotation;
   public int sampleRate;
-  public float hoverDelay;
+  public int hoverDelay;
   public String model;
 
-  public DetectTask(String taskID, ImmutableSeq<Point> wayPoints, float gimbalPitch, float droneRotation, int sampleRate, float hoverDelay, String model) {
+  public DetectTask(String taskID, ImmutableSeq<Point> wayPoints, float gimbalPitch, float droneRotation, int sampleRate, int hoverDelay, String model) {
     super(taskID, wayPoints);
     this.gimbalPitch = gimbalPitch;
     this.droneRotation = droneRotation;
@@ -29,15 +29,15 @@ public class DetectTask extends Task {
   @Override
   public String generateDefineTaskCode() {
     return """
-            # TASK%s
-            kwargs.clear()
-            kwargs["gimbal_pitch"] = "%s"
-            kwargs["drone_rotation"] = "%s"
-            kwargs["sample_rate"] = "%s"
-            kwargs["hover_delay"] = "%s"
-            kwargs["coords"] = "%s"
-            self.%s = DetectTask(self.drone, "%s", event_queue, **kwargs)
-            self.taskMap["%s"] = self.%s
+                # TASK%s
+                kwargs.clear()
+                kwargs["gimbal_pitch"] = "%s"
+                kwargs["drone_rotation"] = "%s"
+                kwargs["sample_rate"] = "%s"
+                kwargs["hover_delay"] = "%s"
+                kwargs["coords"] = "%s"
+                self.%s = DetectTask(self.drone, "%s", event_queue, **kwargs)
+                self.taskMap["%s"] = self.%s
         """.formatted(taskID, gimbalPitch, droneRotation, sampleRate, hoverDelay, wayPointsString(), taskID, taskID, taskID, taskID);
   }
 }

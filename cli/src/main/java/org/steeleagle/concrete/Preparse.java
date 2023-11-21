@@ -41,6 +41,8 @@ public interface Preparse {
         var hover_delay = attrMap.get("hover_delay").child(NUMBER).tokenText();
         var model = attrMap.get("model").child(NAME).tokenText();
 
+
+
         var wayPoints = attrMap.get("way_points").child(SQUARE_BRACKED).childrenOfType(PAREN).
             map(point -> {
               var nums = point.child(WAYPOINT).childrenOfType(NUMBER)
@@ -56,7 +58,7 @@ public interface Preparse {
             gimbal_pitch.toFloat(),
             drone_rotation.toFloat(),
             sample_rate.toInt(),
-            hover_delay.toFloat(),
+            hover_delay.toInt(),
             model.toString()
         );
         yield Tuple.of(taskID, detectTask);

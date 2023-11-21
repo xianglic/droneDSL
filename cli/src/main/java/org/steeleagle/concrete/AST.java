@@ -34,7 +34,7 @@ public final class AST {
 
   private String detectTaskContent() {
 
-    StringBuilder triggerEvent = new StringBuilder("# triggered event\n");
+    StringBuilder triggerEvent = new StringBuilder("        # triggered event\n");
 
     taskMap.forEach( (taskID, taskContent) ->{
       taskContent.transitions.forEach(transition -> {
@@ -42,7 +42,7 @@ public final class AST {
           triggerEvent.append(String.format("""
                     if (self.task_id == "%s"):
                         # construct the timer with %s seconds
-                        timer = threading.Timer(%s, self.trigger_event, ["timeup"])
+                        timer = threading.Timer(%s, self.trigger_event, ["timeout"])
                         # Start the timer
                         timer.start()
             """, taskID, transition.condArg(), transition.condArg()));
@@ -110,6 +110,11 @@ public final class AST {
                         
             """, tran.condID(), tran.nextTaskID()));
       });
+      staticMethod.append(String.format("""
+                    if (triggered_event == "done"):
+                        return "terminate"
+                        
+            """));
       transitionMap.append(String.format("            \"%s\": self.%s_transit,\n", taskID, taskID));
     });
 
@@ -164,31 +169,31 @@ public final class AST {
   private String missionRunnerContent() {
 
     StringBuilder initContent = new StringBuilder("""
-        def __init__(self, drone):
-            super().__init__(drone)
-            self.curr_task_id = None
-            self.taskMap = {}
-            self.event_queue = queue.Queue()
+            def __init__(self, drone):
+                super().__init__(drone)
+                self.curr_task_id = None
+                self.taskMap = {}
+                self.event_queue = queue.Queue()
         """);
 
     StringBuilder defineTaskContent = new StringBuilder();
 
     String startMissionContent = """
-        def start_mission(self):
-            # set the current task
-            task_id = self.%s.get_task_id()
-            self.set_current_task(task_id)
-            print(f"MR: start mission, current taskid:{task_id}\\n")
-            # start
-            self.taskQueue.put(self.t1)
-            print("MR: taking off")
-            self.drone.takeOff()
-            self._execLoop()
-         """.formatted(startTaskID);
+             def start_mission(self):
+                # set the current task
+                task_id = self.%s.get_task_id()
+                self.set_current_task(task_id)
+                print(f"MR: start mission, current taskid:{task_id}\\n")
+                # start
+                self.taskQueue.put(self.%s)
+                print("MR: taking off")
+                self.drone.takeOff()
+                self._execLoop()
+         """.formatted(startTaskID, startTaskID);
 
     taskMap.forEach((taskID, taskContent) -> {
       // Example of what you might want to append
-      initContent.append(String.format("    self.%s\n", taskID));
+      initContent.append(String.format("        self.%s = None\n", taskID));
       defineTaskContent.append(taskContent.generateDefineTaskCode());
     });
 
@@ -203,37 +208,37 @@ public final class AST {
                     
             class MissionRunner(FlightScript):
               """ + initContent + """
-            def define_task(self, event_queue):
-                # Define task
-                kwargs = {}
+                def define_task(self, event_queue):
+                    # Define task
+                    kwargs = {}
             """ + defineTaskContent + """
-            def transit_to(self, task_id):
-                print(f"MR: transit to task with task_id: {task_id}, current_task_id: {self.curr_task_id}")
-                self.set_current_task(task_id)
-                self._kill()
-                if (task_id != 0):
-                    self._push_task(self.taskMap[task_id])
-                    self._execLoop()
-                else:
-                    self.end_mission()
+                def transit_to(self, task_id):
+                    print(f"MR: transit to task with task_id: {task_id}, current_task_id: {self.curr_task_id}")
+                    self.set_current_task(task_id)
+                    self._kill()
+                    if (task_id != "terminate"):
+                        self._push_task(self.taskMap[task_id])
+                        self._execLoop()
+                    else:
+                        self.end_mission()
             """ + startMissionContent + """
-              def end_mission(self):
-                  print("MR: end mission, rth\\n")
-                  self.drone.rth()
-              def set_current_task(self, task_id):
-                  self.curr_task_id = task_id
-              def get_current_task(self):
-                  return self.curr_task_id
-              def run(self):
-                  try:
-                      # define task
-                      print("MR: define the tasks\\n")
-                      self.define_task(self.event_queue)
-                      # start mission
-                      print("MR: start the mission!\\n")
-                      self.start_mission()
-                  except Exception as e:
-                      print(e)
+                def end_mission(self):
+                    print("MR: end mission, rth\\n")
+                    self.drone.rth()
+                def set_current_task(self, task_id):
+                    self.curr_task_id = task_id
+                def get_current_task(self):
+                    return self.curr_task_id
+                def run(self):
+                    try:
+                        # define task
+                        print("MR: define the tasks\\n")
+                        self.define_task(self.event_queue)
+                        # start mission
+                        print("MR: start the mission!\\n")
+                        self.start_mission()
+                    except Exception as e:
+                        print(e)
             """);
   }
 
