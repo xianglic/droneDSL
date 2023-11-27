@@ -1,4 +1,4 @@
-package org.steeleagle.concrete;
+package org.steeleagle.pythonGen.concrete;
 
 import kala.collection.immutable.ImmutableMap;
 import kala.collection.mutable.MutableMap;
@@ -7,10 +7,6 @@ import kala.tuple.Tuple;
 import kala.tuple.Tuple2;
 import org.aya.intellij.GenericNode;
 import org.jetbrains.annotations.NotNull;
-import org.steeleagle.concrete.Task.Transition;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.steeleagle.parser.BotPsiElementTypes.*;
 
@@ -84,7 +80,7 @@ public interface Preparse {
       var curr_task = taskPair.get(0);
       var next_task = taskPair.get(1);
 
-      var tran = new Transition(condId, arg, curr_task, next_task);
+      var tran = new Task.Transition(condId, arg, curr_task, next_task);
       taskMap.get(curr_task).transitions.add(tran);
     }
 

@@ -1,8 +1,6 @@
-package org.steeleagle.concrete;
+package org.steeleagle.pythonGen.concrete;
 
-import kala.collection.immutable.ImmutableMap;
 import kala.collection.immutable.ImmutableSeq;
-import kala.text.StringSlice;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,5 +45,5 @@ public abstract class Task {
   }
 
   public abstract void debugPrint();
-  public abstract String generateDefineTaskCode(int isSteelEagle);
+  public abstract String generateDefineTaskCode(boolean isSteelEagle);
 }

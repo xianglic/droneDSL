@@ -1,2 +1,2 @@
 rootProject.name = "steel-eagle"
-include("cli")
+include("cli", "preprocess")

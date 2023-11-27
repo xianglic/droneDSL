@@ -16,7 +16,7 @@ gradle.properties
 .DS_Store
 lombok.config
 
-output/
+postprocess/
 test.aya
 
 DSL-MS.py

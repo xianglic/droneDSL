@@ -1,11 +1,8 @@
 package org.steeleagle.pythonGen;
 
-import org.steeleagle.concrete.AST;
-import org.steeleagle.concrete.Task;
+import org.steeleagle.pythonGen.concrete.AST;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 public class CodeGeneratorPython {
   public static void generateCode(AST ast) {

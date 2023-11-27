@@ -6,6 +6,7 @@ dependencies {
   implementation(libs.aya.tools)
   implementation(libs.aya.ipcore)
   implementation(libs.aya.ipwrapper)
+  implementation(project(":preprocess"))
 }
 
 val genDir = file("src/main/gen")
@@ -21,6 +22,6 @@ val lexer = tasks.register<JFlexTask>("lexer") {
 
 val genVer = tasks.register<GenerateVersionTask>("genVer") {
   basePackage = "org.steeleagle"
-  outputDir = file(genDir).resolve("org/steeleagle/prelude")
+  outputDir = genDir.resolve("org/steeleagle/prelude")
 }
 listOf(tasks.sourcesJar, tasks.compileJava).forEach { it.configure { dependsOn(genVer, lexer) } }

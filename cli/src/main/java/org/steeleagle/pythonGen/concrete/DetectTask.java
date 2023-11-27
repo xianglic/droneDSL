@@ -1,4 +1,4 @@
-package org.steeleagle.concrete;
+package org.steeleagle.pythonGen.concrete;
 
 import kala.collection.immutable.ImmutableSeq;
 
@@ -27,8 +27,8 @@ public class DetectTask extends Task {
   }
 
   @Override
-  public String generateDefineTaskCode(int isSteelEagle) {
-    if (isSteelEagle == 0){
+  public String generateDefineTaskCode(boolean isSteelEagle) {
+    if (!isSteelEagle){
       return """
                 # TASK%s
                 kwargs.clear()
