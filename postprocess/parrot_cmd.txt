@@ -1,0 +1,78 @@
+1. Accessing Command Line Help:
+You can access help pages for the simulation commands using:
+parrot-ue4-<xxxxx> -help
+sphinx --help
+These commands will list all available command-line parameters for the respective tools.
+
+2. Sphinx Command Line Structure:
+The Sphinx command line includes global options (like -h or --help) and a path to a .drone file.
+The .drone file path can be appended with drone parameters, each separated by two colons ::.
+Example: /path/to/my.drone::param1=value1::param2=value2.
+
+3. Choosing the World Level:
+UE4 worlds often come with multiple levels or scenes.
+To list available levels: parrot-ue4-forest -list-levels.
+To start the UE4 application with a specific level: parrot-ue4-forest -level=sparse.
+
+4. Setting the Spawn Point:
+The spawn point determines where the drone will start in the scene.
+To list spawn points: parrot-ue4-landscape-mountains -level=main -ams-path=DefaultPath,Pickup,Jasper -list-spawn-points.
+You can start Sphinx with a selected spawn point using the pose parameter: sphinx <my.drone>::pose=Lake.
+To set custom coordinates for the spawn point, use a format like: sphinx <my.drone>::pose="14.7 80.2 200.2 0 0 3.14159".
+
+5. Setting Custom GPS Coordinates:
+You can override default GPS coordinates with user-defined ones using the -gps-json option.
+Example: parrot-ue4-landscape-mountains -gps-json='{"lat_deg":-48.876667, "lng_deg":-123.393333, "elevation":1.5}'.
+Latitude and longitude are in decimal degrees, and elevation is in meters.
+
+
+
+Attemp:
+    parrot-ue4-carla -gps-json='{"lat_deg":40.4534506, "lng_deg":-80.0076661, "elevation":10.0}'
+
+    40.41557, -79.95038
+    sphinx "/opt/parrot-sphinx/usr/share/sphinx/drones/anafi.drone"::firmware="https://firmware.parrot.com/Versions/anafi/pc/%23latest/images/anafi-pc.ext2.zip"::pose="-79.95038 40.41557 0 0.000000 -0.000000 0.000000"
+
+
+    parrot-ue4-sphx-tests -gps-json='{"lat_deg":40.41557, "lng_deg":-79.95038, "elevation":0.0}'
+
+    sphinx "/opt/parrot-sphinx/usr/share/sphinx/drones/anafi.drone"::firmware="https://firmware.parrot.com/Versions/anafi/pc/%23latest/images/anafi-pc.ext2.zip"
+
+
+"[{'lng': -79.9504218, 'lat': 40.4155937, 'alt': 50.0}, {'lng': -79.9505123, 'lat': 40.4155293, 'alt': 50.0}, {'lng': -79.9503849, 'lat': 40.4155059, 'alt': 50.0}, {'lng': -79.9504218, 'lat': 40.4155937, 'alt': 50.0}]"
+"[{'lng': -79.9503613, 'lat': 40.4156274, 'alt': 50.0}, {'lng': -79.9503231, 'lat': 40.415537, 'alt': 50.0}, {'lng': -79.950185, 'lat': 40.415561, 'alt': 50.0}, {'lng': -79.9502218, 'lat': 40.4156524, 'alt': 50.0}, {'lng': -79.9503613, 'lat': 40.4156274, 'alt': 50.0}]"
+
+
+
+droneDSL:
+    env:
+        sphinx "/opt/parrot-sphinx/usr/share/sphinx/drones/anafi.drone"::firmware="https://firmware.parrot.com/Versions/anafi/pc/%23latest/images/anafi-pc.ext2.zip"::pose="-79.95038 40.41557 0 0 0 3.14159"
+
+        parrot-ue4-carla -level=town_06 -gps-json='{"lat_deg":40.41557, "lng_deg":-79.95038, "elevation":0.0}'
+    Task:
+
+
+
+
+
+Task switch:
+
+    env:
+        sphinx "/opt/parrot-sphinx/usr/share/sphinx/drones/anafi.drone"::firmware="https://firmware.parrot.com/Versions/anafi/pc/%23latest/images/anafi-pc.ext2.zip"
+
+        parrot-ue4-sphx-tests -level=main -list-paths
+        == Available Paths ===========================================
+        Path name : DefaultPath
+        Path name : LongPath
+        Path name : SquarePath
+        ==============================================================
+
+        parrot-ue4-sphx-tests -gps-json='{"lat_deg":40.4156235, "lng_deg":-79.9504726 , "elevation":1.5}' -ams-path="DefaultPath,Pickup:*" -ams-path=SquarePath,Jasper
+
+        sphinx-cli param -m world actors pause false
+    Task:
+        90 second: task1 complete -> task 2 complete
+
+
+
+
