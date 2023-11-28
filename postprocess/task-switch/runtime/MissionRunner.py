@@ -22,7 +22,7 @@ class MissionRunner(FlightScript):
         kwargs["drone_rotation"] = "0.0"
         kwargs["sample_rate"] = "2"
         kwargs["hover_delay"] = "5"
-        kwargs["coords"] = "[{'lng': -79.95035, 'lat': 40.41558, 'alt': 25.0}, {'lng': -79.94917, 'lat': 40.41558, 'alt': 25.0}]"
+        kwargs["coords"] = "[{'lng': -79.95027, 'lat': 40.415672, 'alt': 25.0}, {'lng': -79.950264, 'lat': 40.41546, 'alt': 25.0}, {'lng': -79.94991, 'lat': 40.415455, 'alt': 25.0}, {'lng': -79.94991, 'lat': 40.415676, 'alt': 25.0}, {'lng': -79.95027, 'lat': 40.415672, 'alt': 25.0}]"
         self.task1 = DetectTask(self.drone, "task1", event_queue, **kwargs)
         self.taskMap["task1"] = self.task1
         # TASKtask2
@@ -31,7 +31,7 @@ class MissionRunner(FlightScript):
         kwargs["drone_rotation"] = "0.0"
         kwargs["sample_rate"] = "2"
         kwargs["hover_delay"] = "5"
-        kwargs["coords"] = "[{'lng': -79.94973, 'lat': 40.415504, 'alt': 25.0}, {'lng': -79.9497, 'lat': 40.41507, 'alt': 25.0}]"
+        kwargs["coords"] = "[{'lng': -79.949905, 'lat': 40.4153, 'alt': 25.0}, {'lng': -79.95023, 'lat': 40.4153, 'alt': 25.0}, {'lng': -79.95005, 'lat': 40.41511, 'alt': 25.0}, {'lng': -79.949905, 'lat': 40.4153, 'alt': 25.0}]"
         self.task2 = DetectTask(self.drone, "task2", event_queue, **kwargs)
         self.taskMap["task2"] = self.task2
     def transit_to(self, task_id):
