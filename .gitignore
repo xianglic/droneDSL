@@ -1,4 +1,6 @@
 build/
+
+# ide
 /.idea/*.xml
 /.idea/.gitignore
 /.idea/modules/*
@@ -13,11 +15,13 @@ build/
 /.vscode/
 *.iml
 gradle.properties
+
+# mac
 .DS_Store
+
+# lombok
 lombok.config
 
+# output
 postprocess/
-test.aya
 
-DSL-MS.py
-/DetectTask.java

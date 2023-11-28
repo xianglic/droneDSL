@@ -1,2 +1,2 @@
-rootProject.name = "steel-eagle"
+rootProject.name = "droneDSL"
 include("cli", "preprocess")

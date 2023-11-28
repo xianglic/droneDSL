@@ -1,5 +1,5 @@
 plugins { application }
-application.mainClass.set("org.steeleagle.Main")
+application.mainClass.set("org.droneDSL.cli.Main")
 
 dependencies {
   api(libs.picocli)
@@ -16,12 +16,12 @@ idea.module {
 }
 
 val lexer = tasks.register<JFlexTask>("lexer") {
-  outputDir = genDir.resolve("org/steeleagle/parser")
+  outputDir = genDir.resolve("org/droneDSL/cli/parser")
   jflex = file("src/main/grammar/BotPsiLexer.flex")
 }
 
 val genVer = tasks.register<GenerateVersionTask>("genVer") {
-  basePackage = "org.steeleagle"
-  outputDir = genDir.resolve("org/steeleagle/prelude")
+  basePackage = "org.steeleagle.cli"
+  outputDir = genDir.resolve("org/steeleagle/cli/prelude")
 }
 listOf(tasks.sourcesJar, tasks.compileJava).forEach { it.configure { dependsOn(genVer, lexer) } }

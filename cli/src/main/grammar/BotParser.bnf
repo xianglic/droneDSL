@@ -8,10 +8,10 @@
   generatePsi=false
 
   // we only need the parser and element types.
-  parserClass='org.steeleagle.parser.BotPsiParser'
-  elementTypeHolderClass='org.steeleagle.parser.BotPsiElementTypes'
-  elementTypeClass='org.steeleagle.parser.BotPsiElementType'
-  tokenTypeClass='org.steeleagle.parser.BotPsiTokenType'
+  parserClass='org.droneDSL.cli.parser.BotPsiParser'
+  elementTypeHolderClass='org.droneDSL.cli.parser.BotPsiElementTypes'
+  elementTypeClass='org.droneDSL.cli.parser.BotPsiElementType'
+  tokenTypeClass='org.droneDSL.cli.parser.BotPsiTokenType'
 }
 
 // file structure
