@@ -3,12 +3,11 @@ package org.droneDSL.cli.parser;
 
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
-
+import static org.droneDSL.cli.parser.BotPsiElementTypes.*;
 import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
-
-import com.intellij.lang.parser.GeneratedParserUtilBase;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.tree.TokenSet;
 import com.intellij.lang.PsiParser;
 import com.intellij.lang.LightPsiParser;
 
@@ -40,12 +39,12 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
   // ID <<coloned attribute_expr>>
   public static boolean attribute(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "attribute")) return false;
-    if (!GeneratedParserUtilBase.nextTokenIs(b, BotPsiElementTypes.ID)) return false;
+    if (!nextTokenIs(b, ID)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = GeneratedParserUtilBase.consumeToken(b, BotPsiElementTypes.ID);
+    r = consumeToken(b, ID);
     r = r && coloned(b, l + 1, BotPsiParser::attribute_expr);
-    exit_section_(b, m, BotPsiElementTypes.ATTRIBUTE, r);
+    exit_section_(b, m, ATTRIBUTE, r);
     return r;
   }
 
@@ -54,8 +53,8 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
   public static boolean attribute_expr(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "attribute_expr")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, BotPsiElementTypes.ATTRIBUTE_EXPR, "<attribute expr>");
-    r = GeneratedParserUtilBase.consumeToken(b, BotPsiElementTypes.NUMBER);
+    Marker m = enter_section_(b, l, _NONE_, ATTRIBUTE_EXPR, "<attribute expr>");
+    r = consumeToken(b, NUMBER);
     if (!r) r = name(b, l + 1);
     if (!r) r = square_bracked(b, l + 1, attribute_expr_2_0_parser_);
     exit_section_(b, l, m, r, false, null);
@@ -78,12 +77,12 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
   // LBRACE <<param>> RBRACE
   static boolean braced(PsiBuilder b, int l, Parser _param) {
     if (!recursion_guard_(b, l, "braced")) return false;
-    if (!GeneratedParserUtilBase.nextTokenIs(b, BotPsiElementTypes.LBRACE)) return false;
+    if (!nextTokenIs(b, LBRACE)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = GeneratedParserUtilBase.consumeToken(b, BotPsiElementTypes.LBRACE);
+    r = consumeToken(b, LBRACE);
     r = r && _param.parse(b, l);
-    r = r && GeneratedParserUtilBase.consumeToken(b, BotPsiElementTypes.RBRACE);
+    r = r && consumeToken(b, RBRACE);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -92,10 +91,10 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
   // COLON <<param>>
   static boolean coloned(PsiBuilder b, int l, Parser _param) {
     if (!recursion_guard_(b, l, "coloned")) return false;
-    if (!GeneratedParserUtilBase.nextTokenIs(b, BotPsiElementTypes.COLON)) return false;
+    if (!nextTokenIs(b, COLON)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = GeneratedParserUtilBase.consumeToken(b, BotPsiElementTypes.COLON);
+    r = consumeToken(b, COLON);
     r = r && _param.parse(b, l);
     exit_section_(b, m, null, r);
     return r;
@@ -133,7 +132,7 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "commaSep_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = GeneratedParserUtilBase.consumeToken(b, BotPsiElementTypes.COMMA);
+    r = consumeToken(b, COMMA);
     r = r && _param.parse(b, l);
     exit_section_(b, m, null, r);
     return r;
@@ -143,12 +142,12 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
   // ID <<paren NUMBER>>?
   public static boolean cond(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "cond")) return false;
-    if (!GeneratedParserUtilBase.nextTokenIs(b, BotPsiElementTypes.ID)) return false;
+    if (!nextTokenIs(b, ID)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = GeneratedParserUtilBase.consumeToken(b, BotPsiElementTypes.ID);
+    r = consumeToken(b, ID);
     r = r && cond_1(b, l + 1);
-    exit_section_(b, m, BotPsiElementTypes.COND, r);
+    exit_section_(b, m, COND, r);
     return r;
   }
 
@@ -163,7 +162,7 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
   // task mission
   static boolean file(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "file")) return false;
-    if (!GeneratedParserUtilBase.nextTokenIs(b, BotPsiElementTypes.TASK_KW)) return false;
+    if (!nextTokenIs(b, TASK_KW)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = task(b, l + 1);
@@ -176,12 +175,12 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
   // MISSION_KW <<braced mission_content>>
   public static boolean mission(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mission")) return false;
-    if (!GeneratedParserUtilBase.nextTokenIs(b, BotPsiElementTypes.MISSION_KW)) return false;
+    if (!nextTokenIs(b, MISSION_KW)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = GeneratedParserUtilBase.consumeToken(b, BotPsiElementTypes.MISSION_KW);
+    r = consumeToken(b, MISSION_KW);
     r = r && braced(b, l + 1, BotPsiParser::mission_content);
-    exit_section_(b, m, BotPsiElementTypes.MISSION, r);
+    exit_section_(b, m, MISSION, r);
     return r;
   }
 
@@ -189,12 +188,12 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
   // mission_start_decl mission_transition*
   public static boolean mission_content(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mission_content")) return false;
-    if (!GeneratedParserUtilBase.nextTokenIs(b, BotPsiElementTypes.MISSION_START_KW)) return false;
+    if (!nextTokenIs(b, MISSION_START_KW)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = mission_start_decl(b, l + 1);
     r = r && mission_content_1(b, l + 1);
-    exit_section_(b, m, BotPsiElementTypes.MISSION_CONTENT, r);
+    exit_section_(b, m, MISSION_CONTENT, r);
     return r;
   }
 
@@ -213,12 +212,12 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
   // MISSION_START_KW <<braced task_name>>
   public static boolean mission_start_decl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mission_start_decl")) return false;
-    if (!GeneratedParserUtilBase.nextTokenIs(b, BotPsiElementTypes.MISSION_START_KW)) return false;
+    if (!nextTokenIs(b, MISSION_START_KW)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = GeneratedParserUtilBase.consumeToken(b, BotPsiElementTypes.MISSION_START_KW);
+    r = consumeToken(b, MISSION_START_KW);
     r = r && braced(b, l + 1, BotPsiParser::task_name);
-    exit_section_(b, m, BotPsiElementTypes.MISSION_START_DECL, r);
+    exit_section_(b, m, MISSION_START_DECL, r);
     return r;
   }
 
@@ -226,15 +225,15 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
   // TRANSITION_KW <<paren cond>> task_name ARROW task_name
   public static boolean mission_transition(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mission_transition")) return false;
-    if (!GeneratedParserUtilBase.nextTokenIs(b, BotPsiElementTypes.TRANSITION_KW)) return false;
+    if (!nextTokenIs(b, TRANSITION_KW)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = GeneratedParserUtilBase.consumeToken(b, BotPsiElementTypes.TRANSITION_KW);
+    r = consumeToken(b, TRANSITION_KW);
     r = r && paren(b, l + 1, BotPsiParser::cond);
     r = r && task_name(b, l + 1);
-    r = r && GeneratedParserUtilBase.consumeToken(b, BotPsiElementTypes.ARROW);
+    r = r && consumeToken(b, ARROW);
     r = r && task_name(b, l + 1);
-    exit_section_(b, m, BotPsiElementTypes.MISSION_TRANSITION, r);
+    exit_section_(b, m, MISSION_TRANSITION, r);
     return r;
   }
 
@@ -242,11 +241,11 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
   // ID
   public static boolean name(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "name")) return false;
-    if (!GeneratedParserUtilBase.nextTokenIs(b, BotPsiElementTypes.ID)) return false;
+    if (!nextTokenIs(b, ID)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = GeneratedParserUtilBase.consumeToken(b, BotPsiElementTypes.ID);
-    exit_section_(b, m, BotPsiElementTypes.NAME, r);
+    r = consumeToken(b, ID);
+    exit_section_(b, m, NAME, r);
     return r;
   }
 
@@ -258,13 +257,13 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
   // LPAREN <<param>> RPAREN
   public static boolean paren(PsiBuilder b, int l, Parser _param) {
     if (!recursion_guard_(b, l, "paren")) return false;
-    if (!GeneratedParserUtilBase.nextTokenIs(b, BotPsiElementTypes.LPAREN)) return false;
+    if (!nextTokenIs(b, LPAREN)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = GeneratedParserUtilBase.consumeToken(b, BotPsiElementTypes.LPAREN);
+    r = consumeToken(b, LPAREN);
     r = r && _param.parse(b, l);
-    r = r && GeneratedParserUtilBase.consumeToken(b, BotPsiElementTypes.RPAREN);
-    exit_section_(b, m, BotPsiElementTypes.PAREN, r);
+    r = r && consumeToken(b, RPAREN);
+    exit_section_(b, m, PAREN, r);
     return r;
   }
 
@@ -272,13 +271,13 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
   // LSQUA <<param>> RSQUA
   public static boolean square_bracked(PsiBuilder b, int l, Parser _param) {
     if (!recursion_guard_(b, l, "square_bracked")) return false;
-    if (!GeneratedParserUtilBase.nextTokenIs(b, BotPsiElementTypes.LSQUA)) return false;
+    if (!nextTokenIs(b, LSQUA)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = GeneratedParserUtilBase.consumeToken(b, BotPsiElementTypes.LSQUA);
+    r = consumeToken(b, LSQUA);
     r = r && _param.parse(b, l);
-    r = r && GeneratedParserUtilBase.consumeToken(b, BotPsiElementTypes.RSQUA);
-    exit_section_(b, m, BotPsiElementTypes.SQUARE_BRACKED, r);
+    r = r && consumeToken(b, RSQUA);
+    exit_section_(b, m, SQUARE_BRACKED, r);
     return r;
   }
 
@@ -286,12 +285,12 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
   // TASK_KW <<braced task_decl*>>
   public static boolean task(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "task")) return false;
-    if (!GeneratedParserUtilBase.nextTokenIs(b, BotPsiElementTypes.TASK_KW)) return false;
+    if (!nextTokenIs(b, TASK_KW)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = GeneratedParserUtilBase.consumeToken(b, BotPsiElementTypes.TASK_KW);
+    r = consumeToken(b, TASK_KW);
     r = r && braced(b, l + 1, BotPsiParser::task_1_0);
-    exit_section_(b, m, BotPsiElementTypes.TASK, r);
+    exit_section_(b, m, TASK, r);
     return r;
   }
 
@@ -310,11 +309,11 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
   // <<braced <<commaSep attributes>>>>
   public static boolean task_body(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "task_body")) return false;
-    if (!GeneratedParserUtilBase.nextTokenIs(b, BotPsiElementTypes.LBRACE)) return false;
+    if (!nextTokenIs(b, LBRACE)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = braced(b, l + 1, task_body_0_0_parser_);
-    exit_section_(b, m, BotPsiElementTypes.TASK_BODY, r);
+    exit_section_(b, m, TASK_BODY, r);
     return r;
   }
 
@@ -322,9 +321,9 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
   // (TASK_DETECT_KW | TASK_TRACK_KW) task_name task_body
   public static boolean task_decl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "task_decl")) return false;
-    if (!nextTokenIs(b, "<task decl>", BotPsiElementTypes.TASK_DETECT_KW, BotPsiElementTypes.TASK_TRACK_KW)) return false;
+    if (!nextTokenIs(b, "<task decl>", TASK_DETECT_KW, TASK_TRACK_KW)) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, BotPsiElementTypes.TASK_DECL, "<task decl>");
+    Marker m = enter_section_(b, l, _NONE_, TASK_DECL, "<task decl>");
     r = task_decl_0(b, l + 1);
     r = r && task_name(b, l + 1);
     r = r && task_body(b, l + 1);
@@ -336,8 +335,8 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
   private static boolean task_decl_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "task_decl_0")) return false;
     boolean r;
-    r = GeneratedParserUtilBase.consumeToken(b, BotPsiElementTypes.TASK_DETECT_KW);
-    if (!r) r = GeneratedParserUtilBase.consumeToken(b, BotPsiElementTypes.TASK_TRACK_KW);
+    r = consumeToken(b, TASK_DETECT_KW);
+    if (!r) r = consumeToken(b, TASK_TRACK_KW);
     return r;
   }
 
@@ -345,11 +344,11 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
   // name
   public static boolean task_name(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "task_name")) return false;
-    if (!GeneratedParserUtilBase.nextTokenIs(b, BotPsiElementTypes.ID)) return false;
+    if (!nextTokenIs(b, ID)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = name(b, l + 1);
-    exit_section_(b, m, BotPsiElementTypes.TASK_NAME, r);
+    exit_section_(b, m, TASK_NAME, r);
     return r;
   }
 
@@ -357,15 +356,15 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
   // NUMBER COMMA NUMBER COMMA NUMBER
   public static boolean waypoint(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "waypoint")) return false;
-    if (!GeneratedParserUtilBase.nextTokenIs(b, BotPsiElementTypes.NUMBER)) return false;
+    if (!nextTokenIs(b, NUMBER)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, BotPsiElementTypes.NUMBER, BotPsiElementTypes.COMMA, BotPsiElementTypes.NUMBER, BotPsiElementTypes.COMMA, BotPsiElementTypes.NUMBER);
-    exit_section_(b, m, BotPsiElementTypes.WAYPOINT, r);
+    r = consumeTokens(b, 0, NUMBER, COMMA, NUMBER, COMMA, NUMBER);
+    exit_section_(b, m, WAYPOINT, r);
     return r;
   }
 
-  static final Parser NUMBER_parser_ = (b, l) -> GeneratedParserUtilBase.consumeToken(b, BotPsiElementTypes.NUMBER);
+  static final Parser NUMBER_parser_ = (b, l) -> consumeToken(b, NUMBER);
 
   private static final Parser attribute_expr_2_0_0_parser_ = paren_$(BotPsiParser::waypoint);
   private static final Parser attribute_expr_2_0_parser_ = commaSep_$(attribute_expr_2_0_0_parser_);

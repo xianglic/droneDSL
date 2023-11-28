@@ -18,7 +18,7 @@ import java.util.Objects;
 public class Main {
   public static void main(String[] args) {
     String filePath = args[0];
-    boolean isSteelEagle = Objects.equals(args[1], "--steeleagle");
+    boolean isSteelEagle = Objects.equals(args[1], "--se");
     String fileContent;
 
     try {

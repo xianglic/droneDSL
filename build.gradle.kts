@@ -5,7 +5,7 @@ plugins {
 }
 
 allprojects {
-  group = "org.steeleagle"
+  group = "org.droneDSL"
   version = "1.0"
 }
 

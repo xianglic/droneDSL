@@ -21,7 +21,7 @@ val lexer = tasks.register<JFlexTask>("lexer") {
 }
 
 val genVer = tasks.register<GenerateVersionTask>("genVer") {
-  basePackage = "org.steeleagle.cli"
-  outputDir = genDir.resolve("org/steeleagle/cli/prelude")
+  basePackage = "org.droneDSL.cli"
+  outputDir = genDir.resolve("org/droneDSL/cli/prelude")
 }
 listOf(tasks.sourcesJar, tasks.compileJava).forEach { it.configure { dependsOn(genVer, lexer) } }
