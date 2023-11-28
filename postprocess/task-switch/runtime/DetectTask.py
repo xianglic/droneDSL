@@ -1,5 +1,5 @@
 import threading
-from threadlevel.Task import Task
+from dependencies.Task import Task
 import time
 import ast
 
@@ -16,8 +16,8 @@ class DetectTask(Task):
     def run(self):
         # triggered event
         if (self.task_id == "task1"):
-            # construct the timer with 90 seconds
-            timer = threading.Timer(90, self.trigger_event, ["timeout"])
+            # construct the timer with 40 seconds
+            timer = threading.Timer(40, self.trigger_event, ["timeout"])
             # Start the timer
             timer.start()
         try:
@@ -33,7 +33,7 @@ class DetectTask(Task):
                 self.drone.moveTo(lat, lng, alt)
                 time.sleep(hover_delay)
 
-            print("**************Detect Task: Done**************\n")
+            print(f"**************Detect Task: Done**************\n")
             self.trigger_event("done")
         except Exception as e:
             print(e)

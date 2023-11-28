@@ -19,7 +19,8 @@ overall proj struct:
     cli -> fat jar -> package all the files for user download -> refer aya proj generator
         -> task{ctrl+ shift + G -> bnf, lexer task}
         -> weakpoint: Botparser.bnf depend on the functionality of intellij (ctrl+ shift + G) -> gramma kit extension
-        ->
+        -> codeGen
+    preprocess
 
 
 

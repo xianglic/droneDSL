@@ -19,15 +19,15 @@ public final class AST {
   }
 
   public void codeGenPython() throws IOException {
-    var roooot = Paths.get("../postprocess");
+    var pRoot = Paths.get("../postprocess");
     if (!this.isSteelEagle) {
-      var root = roooot.resolve("task-switch");
+      var root = pRoot.resolve("task-switch/runtime");
       Files.createDirectories(root);
       Files.writeString(root.resolve("MissionRunner.py"), missionRunnerContent());
       Files.writeString(root.resolve("TaskController.py"), taskControllerContent());
       Files.writeString(root.resolve("DetectTask.py"), detectTaskContent());
     } else {
-      var root = roooot.resolve("steel-eagle");
+      var root = pRoot.resolve("steel-eagle");
       Files.createDirectories(root);
       Files.writeString(root.resolve("MS.py"), MSContent());
     }
@@ -82,7 +82,7 @@ public final class AST {
 
     return """
                import threading
-               from threadlevel.Task import Task
+               from dependencies.Task import Task
                import time
                import ast
                        
@@ -111,7 +111,7 @@ public final class AST {
                                self.drone.moveTo(lat, lng, alt)
                                time.sleep(hover_delay)
 
-                           print("**************Detect Task: Done**************\\n")
+                           print(f"**************Detect Task: Done**************\\n")
                            self.trigger_event("done")
                        except Exception as e:
                            print(e)
@@ -227,9 +227,9 @@ public final class AST {
 
     return
         """
-            from threadlevel.FlightScript import FlightScript
+            from dependencies.FlightScript import FlightScript
             # Import derived tasks
-            from DetectTask import DetectTask
+            from runtime.DetectTask import DetectTask
             import queue
             import time
                     

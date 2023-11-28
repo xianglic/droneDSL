@@ -1,5 +1,5 @@
-from tasks.MissionRunner import MissionRunner
-from tasks.TaskController import TaskController
+from runtime.MissionRunner import MissionRunner
+from runtime.TaskController import TaskController
 from dependencies.ParrotAnafi import ParrotAnafi
 
 
