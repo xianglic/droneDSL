@@ -17,7 +17,7 @@ class MS(FlightScript):
             kwargs["drone_rotation"] = "0.0"
             kwargs["sample_rate"] = "2"
             kwargs["hover_delay"] = "5"
-            kwargs["coords"] = "[{'lng': -79.95027, 'lat': 40.415672, 'alt': 25.0}, {'lng': -79.950264, 'lat': 40.41546, 'alt': 25.0}, {'lng': -79.94991, 'lat': 40.415455, 'alt': 25.0}, {'lng': -79.94991, 'lat': 40.415676, 'alt': 25.0}, {'lng': -79.95027, 'lat': 40.415672, 'alt': 25.0}]"
+            kwargs["coords"] = "[{'lng': -79.95035, 'lat': 40.41558, 'alt': 25.0}, {'lng': -79.94917, 'lat': 40.41558, 'alt': 25.0}]"
             kwargs["model"] = "none"
             t = DetectTask(self.drone, self.cloudlet, **kwargs)
             self.taskQueue.put(t)

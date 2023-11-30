@@ -46,7 +46,7 @@ class TaskController(threading.Thread):
                 print(f"Controller: event   {item[1]} \n")
                 if (item[0] == self.mr.get_current_task()):
                     next_task_id = self.next_task(item[1])
-                    if (next_task_id == 0):
+                    if (next_task_id == "terminate"):
                         print(f"Controller: the current task is done, terminate the controller \n")
                         break
 

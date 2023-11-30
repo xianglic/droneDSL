@@ -34,10 +34,11 @@ class Task(threading.Thread):
 
     def stop(self):
         thread_id = self._get_id()
-        res = ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(thread_id), ctypes.py_object(SystemExit))
-        if res > 1:
-            ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id, 0)
-            raise RuntimeError('Error killing task thread')
+        if thread_id != None:
+            res = ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(thread_id), ctypes.py_object(SystemExit))
+            if res > 1:
+                ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id, 0)
+                raise RuntimeError('Error killing task thread')
 
     def resume(self):
         pass

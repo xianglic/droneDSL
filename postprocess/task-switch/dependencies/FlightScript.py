@@ -42,8 +42,10 @@ class FlightScript(threading.Thread):
             self.taskQueue = queue.Queue() # Clear the queue
             if self.taskThread is not None:
                 self.taskThread.stop()
+            else:
+                print(f"FlightScript: thread gracefully exit")
         except RuntimeError as e:
-            print(e)
+            print(f"FlightScript: ", e)
 
     def _pause(self):
         pass

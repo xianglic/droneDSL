@@ -73,6 +73,7 @@ public final class AST {
                       if (self.task_id == "%s"):
                           # construct the timer with %s seconds
                           timer = threading.Timer(%s, self.trigger_event, ["timeout"])
+                          timer.daemon = True
                           # Start the timer
                           timer.start()
               """, taskID, transition.condArg(), transition.condArg()));
@@ -93,13 +94,13 @@ public final class AST {
                        self.event_queue = event_queue
                   
                    def trigger_event(self, event):
-                       print(f"**************Detect Task: triggered event! {event}**************\\n")
+                       print(f"**************Detect Task {self.task_id}: triggered event! {event}**************\\n")
                        self.event_queue.put((self.task_id,  event))
                        
                    def run(self):
                    """ + triggerEvent + """
                        try:
-                           print(f"**************Detect Task: hi this is detect task {self.task_id}**************\\n")
+                           print(f"**************Detect Task {self.task_id}: hi this is detect task {self.task_id}**************\\n")
                            coords = ast.literal_eval(self.kwargs["coords"])
                            self.drone.setGimbalPose(0.0, float(self.kwargs["gimbal_pitch"]), 0.0)
                            hover_delay = int(self.kwargs["hover_delay"])
@@ -107,11 +108,11 @@ public final class AST {
                                lng = dest["lng"]
                                lat = dest["lat"]
                                alt = dest["alt"]
-                               print(f"**************Detect Task: move to {lat}, {lng}, {alt}**************")
+                               print(f"**************Detect Task {self.task_id}: move to {lat}, {lng}, {alt}**************")
                                self.drone.moveTo(lat, lng, alt)
                                time.sleep(hover_delay)
 
-                           print(f"**************Detect Task: Done**************\\n")
+                           print(f"**************Detect Task {self.task_id}: Done**************\\n")
                            self.trigger_event("done")
                        except Exception as e:
                            print(e)
@@ -186,7 +187,7 @@ public final class AST {
                                print(f"Controller: event   {item[1]} \\n")
                                if (item[0] == self.mr.get_current_task()):
                                    next_task_id = self.next_task(item[1])
-                                   if (next_task_id == 0):
+                                   if (next_task_id == "terminate"):
                                        print(f"Controller: the current task is done, terminate the controller \\n")
                                        break
                                              
@@ -252,7 +253,8 @@ public final class AST {
             """ + startMissionContent + """
                 def end_mission(self):
                     print("MR: end mission, rth\\n")
-                    self.drone.rth()
+                    self.drone.moveTo(40.4156235, -79.9504726 , 20)
+                    print("MR: land")
                     self.drone.land()
                 def set_current_task(self, task_id):
                     self.curr_task_id = task_id
