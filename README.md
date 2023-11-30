@@ -16,7 +16,7 @@ Steel Eagle is separated into three distinct parts: the local commander client, 
 
 ## Architecture
 
-![image-20231130130713108](/home/xianglic/.config/Typora/typora-user-images/image-20231130130713108.png)
+![img](https://documents.lucid.app/documents/036d65a8-1197-41e7-9e98-4f0be76c5665/pages/0_0?a=3833&x=-190&y=73&w=2839&h=1024&store=1&accept=image%2F*&auth=LCA%20d83a30925054e9f16cdbd19b287814c81a5f7d9a1502f9c8717c56c48066c929-ts%3D1701359926)
 
 ## Nomenclature
 
@@ -32,7 +32,7 @@ Steel Eagle is separated into three distinct parts: the local commander client, 
 
 **Mission Runner** - define all the tasks, start the first task, and manage the task transition based on the decision made from Task Controller.
 
- **Task Controller** - Manage a event queue. Once recieved an event in the event queue, make decision on what task should be run next based on the current task, and event message. Notify the Mission Runner to transit to the next task.
+**Task Controller** - Manage a event queue. Once recieved an event in the event queue, make decision on what task should be run next based on the current task, and event message. Notify the Mission Runner to transit to the next task.
 
 **TaskDefs** - This is the implementation of specific tasks including detect task, track task, and object avoidance task. These tasks are reponsible for sending the triggered event message to the task controller
 
@@ -67,7 +67,7 @@ task 2
 
 ### Command Line Interface
 
-User generates its own DSL based on the below template: 
+User generates its own DSL based on the below template:
 
 ```
         Task {
@@ -89,7 +89,7 @@ User generates its own DSL based on the below template:
 
 
 
-The ^ symbol include what type of information needs to be filled in the template. 
+The ^ symbol include what type of information needs to be filled in the template.
 
 TaskType:
 
@@ -164,7 +164,7 @@ Mission {
 
   - Parrot Simulation Environment:
     - Sphinx drone
-    - parrot unity engine 
+    - parrot unity engine
     - Omlype SDK  environment
 
   - Steel-eagle Pipeline:
@@ -243,8 +243,7 @@ class DetectTask(Task):
 
 ```
 
- ![img](https://documents.lucid.app/documents/036d65a8-1197-41e7-9e98-4f0be76c5665/pages/0_0?a=3833&x=2686&y=1284&w=1167&h=773&store=1&accept=image%2F*&auth=LCA%206f845b95e4708a274f9b232449aa8261fc407a956e3bbabc7715e7dc9446febc-ts%3D1701359926)
-
+![img](https://documents.lucid.app/documents/036d65a8-1197-41e7-9e98-4f0be76c5665/pages/0_0?a=3833&x=2686&y=1284&w=1167&h=773&store=1&accept=image%2F*&auth=LCA%206f845b95e4708a274f9b232449aa8261fc407a956e3bbabc7715e7dc9446febc-ts%3D1701359926)
 
 
 
