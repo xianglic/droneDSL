@@ -12,7 +12,7 @@
 
 ## Design
 
-Steel Eagle is separated into three distinct parts: the local commander client, the cloudlet server, and the onboard software. The commander client is intended to run on a personal computer close to the PIC (Pilot in Command) with an internet connection. It gives an interface to receive telemetry and upload an MS to the drone. It also provides tools to assume manual control of the drone while it is in-flight (*kill* command). The cloudlet server is the bridge between the onboard drone software and the commander client. It relays messages between the two and also publicly hosts flight scripts. Additionally, the server runs compute engines for the drone which will be executed on the offloaded sensor data/video stream. Finally, the onboard software consists of an app that runs on the drone-mounted Android device. This app relays telemetry and offloads sensor data/video frames to the cloudlet server. It also is responsible for interpreting an MS as DSI which are then sent to the drone to execute. Note: once an MS is sent to a drone, it is downloaded onto the onboard app. This means that in the event of a disconnection, the drone can continue executing its mission. See the **Architecture** section for a detailed system diagram.
+The droneDSL is a domain specific language that describes the drone flight behavior. The project is consists of three main module: pre process module, command line interface module, and post process module. The preprocess module allows user to parse the flight informations defined from the MyMap. User use parsed informations to write their own flight mission plan in droneDSL. The command line interface module converts the flight mission plan in droneDSL into the flight mission script written in python that use Olympe drone SDK. The post process module creates the Olympe environment that help user to run the flight script in real time.
 
 ## Architecture
 
@@ -25,6 +25,8 @@ Steel Eagle is separated into three distinct parts: the local commander client, 
 **Task** - A task is a unit of work that should be completed during a mission which consists of a scope and actions. Initially tasks can be simple self-contained units or, in the future, can have dependencies on other tasks. Task ordering will be done by the mission plan generator.
 
 **KML/KMZ** - Keyhole Markup Language is an XML document that is used to define the scope of a mission’s tasks. A KMZ file is a zipped version of a KML document that includes any additional styling resources needed for the KML document.
+
+SteelEagle - An architecture that supports autonomous drone flight. It allows drone to execute  heavy computation task such as detection, tracking, and object avoidance by off loading the computing workload to the edge could.
 
 ## Workflow
 
@@ -148,18 +150,17 @@ example:
     }
 
 
-
 ### Command Line Interface
 
-##### After finish writing the mission script in DSL, user can parse the DSL to low level AST tree
+After finish writing the mission script in DSL, user can parse the DSL to low level AST tree
 
-- ##### Cmd
+Cmd
 
-  ```
-  ./gradlew :cli:run --args="../preprocess/src/main/resources/{DSL script you have written} --args"
-  ```
+```
+./gradlew :cli:run --args="../preprocess/src/main/resources/{DSL script you have written} --args"
+```
 
-  **Examples of AST**
+Example of AST
 
 ```txt
 FILE(0,898)
@@ -185,8 +186,9 @@ FILE(0,898)
     RBRACE(897,898)
 ```
 
-- convert low level AST to concrete level structure Flight Plan Structure (FPS):
-  - The FPS contains the a list of Task object, where each task object has its own task type(detect, track, object avoidance). Each task type contains different set of attribute informations needed for executing that task required for steel-eagle pipeline.
+convert low level AST to concrete level structure Flight Plan Structure (FPS):
+
+- The FPS contains the a list of Task object, where each task object has its own task type(detect, track, object avoidance). Each task type contains different set of attribute informations needed for executing that task required for steel-eagle pipeline.
 
 ![img](https://documents.lucid.app/documents/036d65a8-1197-41e7-9e98-4f0be76c5665/pages/0_0?a=4430&x=370&y=2502&w=2797&h=1278&store=1&accept=image%2F*&auth=LCA%205cb2b0edcaf57679326235c98853fe27a98e634d74ca697f277a8583753e0b5f-ts%3D1701799469)
 
@@ -198,7 +200,7 @@ FILE(0,898)
 
   - Mission Runner: define all the tasks, start the first task, and manage the task transition based on the decision made from Task Controller.
 
-  -  Task Controller: Manage a event queue. Once recieved an event in the event queue, make decision on what task should be run next based on the current task, and event message. Notify the Mission Runner to transit to the next task.
+  - Task Controller: Manage a event queue. Once recieved an event in the event queue, make decision on what task should be run next based on the current task, and event message. Notify the Mission Runner to transit to the next task.
 
   - TaskDefs: This is the implementation of specific tasks including detect task, track task, and object avoidance task. These tasks are reponsible for sending the triggered event message to the task controller
   - The above three components completes a finite state machine for drone's flight mission
@@ -392,42 +394,88 @@ FILE(0,898)
 
 ### Post-process
 
-- Simulation Environment setup:
+In this module, users run the script generated from the CLI module. Currently, the automatic generated script supports the **Steel Eagle** pipeline.
 
-  - Parrot Simulation Environment:
-    - Sphinx drone
-    - parrot unity engine
-    - Omlype SDK  environment
+Background of Steel Eagle:
 
-  - Steel-eagle Pipeline:
-    - onion router
-    - cognitive engine backend
+Steel Eagle is separated into three distinct parts: the local commander client, the cloudlet server, and the on board software. The commander client is intended to run on a personal computer close to the PIC (Pilot in Command) with an Internet connection. It gives an interface to receive telemetry and upload an mission script to the drone. It also provides tools to assume manual control of the drone while it is in-flight (*kill* command). The cloudlet server is the bridge between the onboard drone software and the commander client. It relays messages between the two and also publicly hosts flight scripts. Additionally, the server runs compute engines for the drone which will be executed on the offloaded sensor data/video stream. Finally, the onboard device consists of onion router and drone. The router relays telemetry and offloads sensor data/video frames to the cloudlet server.
+
+![img](https://documents.lucid.app/documents/523a70de-9a85-4a33-9ec7-c156c8f31f8c/pages/0_0?a=3428&x=309&y=1114&w=4181&h=1012&store=1&accept=image%2F*&auth=LCA%20d14269d13fd5623d6182fa1cb17cfc7f55d0a71379af3cf669149bea6a916fbd-ts%3D1701958462)
+
+Simulation Environment setup:
+
+- Parrot Simulation Environment:
+  - Sphinx drone
+  - parrot unity engine
+  - Omlype SDK  environment
+- Steel-eagle Pipeline:
+  - Local commander client:
     - commander
+  - On board device:
+    - Drone
+    - Onion Router
+  - Cloud server
+    - Gabriel Server
+    - Cognitive Engines
     - supervisor
 
-- parrot cmd:
+parrot cmd:
 
-  - ```
-    env:
-        sphinx "/opt/parrot-sphinx/usr/share/sphinx/drones/anafi.drone"::firmware="https://firmware.parrot.com/Versions/anafi/pc/%23latest/images/anafi-pc.ext2.zip"
-    
-        parrot-ue4-sphx-tests -level=main -list-paths
-        == Available Paths ===========================================
-        Path name : DefaultPath
-        Path name : LongPath
-        Path name : SquarePath
-        ==============================================================
-    
-        parrot-ue4-sphx-tests -gps-json='{"lat_deg":40.4156235, "lng_deg":-79.9504726 , "elevation":1.5}' -ams-path="DefaultPath,Pickup:*" -ams-path=SquarePath,Jasper
-    
-        sphinx-cli param -m world actors pause false
-    ```
+```
+env:
+    sphinx "/opt/parrot-sphinx/usr/share/sphinx/drones/anafi.drone"::firmware="https://firmware.parrot.com/Versions/anafi/pc/%23latest/images/anafi-pc.ext2.zip"
 
-- Finite State Machine:
+    parrot-ue4-sphx-tests -level=main -list-paths
+    == Available Paths ===========================================
+    Path name : DefaultPath
+    Path name : LongPath
+    Path name : SquarePath
+    ==============================================================
 
-  - Example
+    parrot-ue4-sphx-tests -gps-json='{"lat_deg":40.4156235, "lng_deg":-79.9504726 , "elevation":1.5}' -ams-path="DefaultPath,Pickup:*" -ams-path=SquarePath,Jasper
 
-    <img src="https://documents.lucid.app/documents/036d65a8-1197-41e7-9e98-4f0be76c5665/pages/0_0?a=3833&x=2686&y=1284&w=1167&h=773&store=1&accept=image%2F*&auth=LCA%206f845b95e4708a274f9b232449aa8261fc407a956e3bbabc7715e7dc9446febc-ts%3D1701359926" alt="img" style="zoom:67%;" />
+    sphinx-cli param -m world actors pause false
+```
+
+
+
+User supposed to zip the generated scripts and uploaded the compressed file to the web server for cloud server to download. Once uploaded, user can run the commander and send the run command to the cloud server. The cloud server will download the script and run it in the supervisor to start the mission plan.
+
+The run time of the mission plan could be concluded as a finite state machine of flight mission. Drone start from the start state. And transit to the first task state and follow the drone command instructed in that state. During that task state, if there is any event triggered, the supervisor will transit the current state to another task state. The supervisor will move the drone to the done state whenever the drone finished all the commands in the current task state. The done state will make the drone to terminate its flight and return to home.
+
+Below is an example of finite state machine that describe this mission in DSL:
+
+```
+Task {
+    Detect task1 {
+        way_points: [(-79.9503492, 40.4155806, 25.0),(-79.9491717, 40.4155826, 25.0)],
+        gimbal_pitch: -45.0,
+        drone_rotation: 0.0,
+        sample_rate: 2,
+        hover_delay: 5
+        model: none
+    }
+    Detect task2 {
+        way_points: [(-79.9497296, 40.415505, 25.0),(-79.9497001, 40.41507, 25.0)],
+        gimbal_pitch: -45.0,
+        drone_rotation: 0.0,
+        sample_rate: 2,
+        hover_delay: 5
+        model: none
+    }
+}
+
+Mission {
+    Start { task1 }
+    Transition (timeout(40)) task1 -> task2
+}
+```
+
+In this case, there are two tasks. Task1 and task2. The drone will start off with the starting task which is task1 by executing its command. When the triggered event in this case "timeup" has occurred, the drone will transit from task 1 to task 2 as instructed in droneDSL. And if the drone finishes its task without transitioning to any other state. It will move to the done state and thereby meant to terminate the whole flight session.
+
+- Finite State Machine example:
+
+  <img src="https://documents.lucid.app/documents/036d65a8-1197-41e7-9e98-4f0be76c5665/pages/0_0?a=3833&x=2686&y=1284&w=1167&h=773&store=1&accept=image%2F*&auth=LCA%206f845b95e4708a274f9b232449aa8261fc407a956e3bbabc7715e7dc9446febc-ts%3D1701359926" alt="img" style="zoom:67%;" />
 
 
 
