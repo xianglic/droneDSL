@@ -9,8 +9,8 @@ public class DetectTask extends Task {
   public int hoverDelay;
   public String model;
 
-  public DetectTask(String taskID, ImmutableSeq<Point> wayPoints, float gimbalPitch, float droneRotation, int sampleRate, int hoverDelay, String model) {
-    super(taskID, wayPoints);
+  public DetectTask(String taskID, ImmutableSeq<Point> wayPoints, String wayPointsID, float gimbalPitch, float droneRotation, int sampleRate, int hoverDelay, String model) {
+    super(taskID, wayPoints, wayPointsID);
     this.gimbalPitch = gimbalPitch;
     this.droneRotation = droneRotation;
     this.sampleRate = sampleRate;
@@ -28,32 +28,34 @@ public class DetectTask extends Task {
 
   @Override
   public String generateDefineTaskCode(boolean isSteelEagle) {
-    if (!isSteelEagle){
+    if (!isSteelEagle) {
       return """
-                # TASK%s
-                kwargs.clear()
-                kwargs["gimbal_pitch"] = "%s"
-                kwargs["drone_rotation"] = "%s"
-                kwargs["sample_rate"] = "%s"
-                kwargs["hover_delay"] = "%s"
-                kwargs["coords"] = "%s"
-                self.%s = DetectTask(self.drone, "%s", event_queue, **kwargs)
-                self.taskMap["%s"] = self.%s
-        """.formatted(taskID, gimbalPitch, droneRotation, sampleRate, hoverDelay, wayPointsString(), taskID, taskID, taskID, taskID);
-    }else{
+                  # TASK%s
+                  kwargs.clear()
+                  kwargs["gimbal_pitch"] = "%s"
+                  kwargs["drone_rotation"] = "%s"
+                  kwargs["sample_rate"] = "%s"
+                  kwargs["hover_delay"] = "%s"
+                  # kwargs["coords"] = "%s"
+                  self.%s = DetectTask(self.drone, "%s", event_queue, **kwargs)
+                  self.taskMap["%s"] = self.%s
+          """.formatted(taskID, gimbalPitch, droneRotation, sampleRate, hoverDelay, taskID, taskID, taskID, taskID);
+    } else {
       return """
-                      # TASK%s
-                      kwargs.clear()
-                      kwargs["gimbal_pitch"] = "%s"
-                      kwargs["drone_rotation"] = "%s"
-                      kwargs["sample_rate"] = "%s"
-                      kwargs["hover_delay"] = "%s"
-                      kwargs["coords"] = "%s"
-                      kwargs["model"] = "%s"
-          """.formatted(taskID, gimbalPitch, droneRotation, sampleRate, hoverDelay, wayPointsString(), model);
+                  # TASK%s
+                  kwargs.clear()
+                  kwargs["gimbal_pitch"] = "%s"
+                  kwargs["drone_rotation"] = "%s"
+                  kwargs["sample_rate"] = "%s"
+                  kwargs["hover_delay"] = "%s"
+                  # kwargs["coords"] = "%s"
+                  kwargs["model"] = "%s"
+                  %s = DetectTask(self.drone, self.cloudlet, "%s", self.trigger_event_queue, transition_args_%s, **kwargs)
+                  self.taskMap["%s"] = %s
+          """.formatted(taskID, gimbalPitch, droneRotation, sampleRate, hoverDelay, model, taskID, taskID, taskID, taskID, taskID);
     }
 
-    }
+  }
 
 
 }

@@ -1,20 +1,21 @@
 package org.droneDSL.cli.codeGen.concrete;
 
 import kala.collection.immutable.ImmutableSeq;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Task {
-  public ImmutableSeq<Point> wayPoints;
+  @Nullable public String wayPointsID;
+  @Nullable public ImmutableSeq<Point> wayPoints;
 
   public String taskID;
 
-  public Task(String taskID, ImmutableSeq<Point> wayPoints) {
+  public Task(String taskID, @Nullable ImmutableSeq<Point> wayPoints, @Nullable String wayPointsID) {
     this.taskID = taskID;
     this.wayPoints = wayPoints;
+    this.wayPointsID  = wayPointsID;
     this.transitions = new ArrayList<>();
   }
 
@@ -29,20 +30,12 @@ public abstract class Task {
   }
 
 
-  public record Transition(
+  public record Transition<T>(
       String condID,
-      @Nullable String condArg,
+      @Nullable T condArg,
       String currentTaskID,
       String nextTaskID
   ){}
-
-  public @NotNull StringBuilder wayPointsString() {
-    var wayPointsStr = new StringBuilder();
-    wayPointsStr.append("[");
-    wayPoints.joinTo(wayPointsStr, ", ", Task.Point::toJson);
-    wayPointsStr.append("]");
-    return wayPointsStr;
-  }
 
   public abstract void debugPrint();
   public abstract String generateDefineTaskCode(boolean isSteelEagle);

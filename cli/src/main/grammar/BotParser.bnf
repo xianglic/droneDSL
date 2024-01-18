@@ -24,7 +24,8 @@ task_body ::= <<braced <<commaSep attributes>>>>
 private attributes ::= attribute*
 attribute ::=  ID <<coloned attribute_expr>>
     //attribute expression: could be number, name, or list of waypoints
-attribute_expr ::= NUMBER | name | <<square_bracked <<commaSep <<paren waypoint>> >> >>
+attribute_expr ::= NUMBER | name | <<square_bracked <<commaSep <<paren waypoint>> >> >> | <<angle_bracked name>>
+//waypoint_id ::= <<angle_bracked name>>
 waypoint ::= NUMBER COMMA NUMBER COMMA NUMBER
 
 task_name ::= name
@@ -36,17 +37,13 @@ mission_content ::= mission_start_decl mission_transition*
 mission_start_decl ::= MISSION_START_KW <<braced task_name>>
 
 mission_transition ::= TRANSITION_KW <<paren cond>> task_name ARROW task_name
-cond ::= ID <<paren NUMBER>>?
-
-//| (mission_start_decl mission_self_adaptive_decl*)
-//mission_self_adaptive_decl ::= MISSION_SELFADAPTIVE_KW mission_sa_body
-
-//mission_sa_body ::= <<braced ID>> // need to modify into given when then
+cond ::= ID <<paren (NUMBER | ID) >>?
 
 
 // meta rules
 // we can improve the parsing by producing generically from a 'commaSep' rule
 meta paren ::= LPAREN <<param>> RPAREN
+meta angle_bracked ::= LANGL <<param>> RANGL
 meta square_bracked ::= LSQUA <<param>> RSQUA
 private meta coloned ::= COLON <<param>>
 private meta commaSep ::= <<param>> (COMMA <<param>>) *

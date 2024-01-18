@@ -36,6 +36,20 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // LANGL <<param>> RANGL
+  public static boolean angle_bracked(PsiBuilder b, int l, Parser _param) {
+    if (!recursion_guard_(b, l, "angle_bracked")) return false;
+    if (!nextTokenIs(b, LANGL)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, LANGL);
+    r = r && _param.parse(b, l);
+    r = r && consumeToken(b, RANGL);
+    exit_section_(b, m, ANGLE_BRACKED, r);
+    return r;
+  }
+
+  /* ********************************************************** */
   // ID <<coloned attribute_expr>>
   public static boolean attribute(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "attribute")) return false;
@@ -49,7 +63,7 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // NUMBER | name | <<square_bracked <<commaSep <<paren waypoint>> >> >>
+  // NUMBER | name | <<square_bracked <<commaSep <<paren waypoint>> >> >> | <<angle_bracked name>>
   public static boolean attribute_expr(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "attribute_expr")) return false;
     boolean r;
@@ -57,6 +71,7 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, NUMBER);
     if (!r) r = name(b, l + 1);
     if (!r) r = square_bracked(b, l + 1, attribute_expr_2_0_parser_);
+    if (!r) r = angle_bracked(b, l + 1, BotPsiParser::name);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -139,7 +154,7 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ID <<paren NUMBER>>?
+  // ID <<paren (NUMBER | ID) >>?
   public static boolean cond(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "cond")) return false;
     if (!nextTokenIs(b, ID)) return false;
@@ -151,11 +166,20 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // <<paren NUMBER>>?
+  // <<paren (NUMBER | ID) >>?
   private static boolean cond_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "cond_1")) return false;
-    paren(b, l + 1, NUMBER_parser_);
+    paren(b, l + 1, BotPsiParser::cond_1_0_0);
     return true;
+  }
+
+  // NUMBER | ID
+  private static boolean cond_1_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "cond_1_0_0")) return false;
+    boolean r;
+    r = consumeToken(b, NUMBER);
+    if (!r) r = consumeToken(b, ID);
+    return r;
   }
 
   /* ********************************************************** */
@@ -363,8 +387,6 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
     exit_section_(b, m, WAYPOINT, r);
     return r;
   }
-
-  static final Parser NUMBER_parser_ = (b, l) -> consumeToken(b, NUMBER);
 
   private static final Parser attribute_expr_2_0_0_parser_ = paren_$(BotPsiParser::waypoint);
   private static final Parser attribute_expr_2_0_parser_ = commaSep_$(attribute_expr_2_0_0_parser_);

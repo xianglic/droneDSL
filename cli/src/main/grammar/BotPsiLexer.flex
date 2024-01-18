@@ -47,6 +47,8 @@ IDENTIFIER=[α-ωa-zA-Z_][α-ωa-zA-Z0-9_'-]*
   ","                 { return COMMA; }
   ":"                 { return COLON; }
   "->"                { return ARROW; }
+  "<"                 { return LANGL; }
+  ">"                 { return RANGL; }
 }
 
 [^] { return BAD_CHARACTER; }

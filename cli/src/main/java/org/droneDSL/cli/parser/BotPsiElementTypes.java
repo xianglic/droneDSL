@@ -5,6 +5,7 @@ import com.intellij.psi.tree.IElementType;
 
 public interface BotPsiElementTypes {
 
+  IElementType ANGLE_BRACKED = new BotPsiElementType("ANGLE_BRACKED");
   IElementType ATTRIBUTE = new BotPsiElementType("ATTRIBUTE");
   IElementType ATTRIBUTE_EXPR = new BotPsiElementType("ATTRIBUTE_EXPR");
   IElementType COND = new BotPsiElementType("COND");
@@ -25,12 +26,14 @@ public interface BotPsiElementTypes {
   IElementType COLON = new BotPsiTokenType("COLON");
   IElementType COMMA = new BotPsiTokenType("COMMA");
   IElementType ID = new BotPsiTokenType("ID");
+  IElementType LANGL = new BotPsiTokenType("LANGL");
   IElementType LBRACE = new BotPsiTokenType("LBRACE");
   IElementType LPAREN = new BotPsiTokenType("LPAREN");
   IElementType LSQUA = new BotPsiTokenType("LSQUA");
   IElementType MISSION_KW = new BotPsiTokenType("MISSION_KW");
   IElementType MISSION_START_KW = new BotPsiTokenType("MISSION_START_KW");
   IElementType NUMBER = new BotPsiTokenType("NUMBER");
+  IElementType RANGL = new BotPsiTokenType("RANGL");
   IElementType RBRACE = new BotPsiTokenType("RBRACE");
   IElementType RPAREN = new BotPsiTokenType("RPAREN");
   IElementType RSQUA = new BotPsiTokenType("RSQUA");

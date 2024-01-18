@@ -1,13 +1,19 @@
 package org.droneDSL.cli.codeGen.concrete;
 
+import kala.collection.Seq;
 import kala.collection.immutable.ImmutableMap;
+import kala.collection.immutable.ImmutableSeq;
 import kala.collection.mutable.MutableMap;
 import kala.text.StringSlice;
 import kala.tuple.Tuple;
 import kala.tuple.Tuple2;
 import org.aya.intellij.GenericNode;
+import org.droneDSL.cli.Main;
 import org.droneDSL.cli.parser.BotPsiElementTypes;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+import java.util.Map;
 
 public interface Preparse {
   enum TaskKind {
@@ -25,7 +31,7 @@ public interface Preparse {
   }
 
   @NotNull
-  static Tuple2<String, Task> createTask(GenericNode<? extends GenericNode<?>> task) {
+  static Tuple2<String, Task> createTask(GenericNode<? extends GenericNode<?>> task, Map<String, List<Main.Pt>> waypointsMap) {
     var attrMap = createMap(task);
     var taskID = task.child(BotPsiElementTypes.TASK_NAME).tokenText().toString();
     return switch (attrMap.kind) {
@@ -36,20 +42,29 @@ public interface Preparse {
         var hover_delay = attrMap.get("hover_delay").child(BotPsiElementTypes.NUMBER).tokenText();
         var model = attrMap.get("model").child(BotPsiElementTypes.NAME).tokenText();
 
+        // waypoints
+        var isWayPointsVar = attrMap.get("way_points").peekChild(BotPsiElementTypes.ANGLE_BRACKED);
+        ImmutableSeq<Task.Point> wayPoints;
+        if (isWayPointsVar == null) {
+          wayPoints = attrMap.get("way_points").child(BotPsiElementTypes.SQUARE_BRACKED).childrenOfType(BotPsiElementTypes.PAREN).
+              map(point -> {
+                var nums = point.child(BotPsiElementTypes.WAYPOINT).childrenOfType(BotPsiElementTypes.NUMBER)
+                    .map(t -> t.tokenText().toFloat())
+                    .toImmutableSeq();
+                return new DetectTask.Point(nums.get(0), nums.get(1), nums.get(2));
+              })
+              .toImmutableSeq();
+        } else {
+          var wayPointsID = attrMap.get("way_points").child(BotPsiElementTypes.ANGLE_BRACKED).child(BotPsiElementTypes.NAME).tokenText().toString();
+          wayPoints = Seq.wrapJava(waypointsMap.get(wayPointsID))
+              .map(pt -> new Task.Point(Float.parseFloat(pt.longitude()), Float.parseFloat(pt.latitude()), Float.parseFloat(pt.altitude())));
+        }
 
-
-        var wayPoints = attrMap.get("way_points").child(BotPsiElementTypes.SQUARE_BRACKED).childrenOfType(BotPsiElementTypes.PAREN).
-            map(point -> {
-              var nums = point.child(BotPsiElementTypes.WAYPOINT).childrenOfType(BotPsiElementTypes.NUMBER)
-                  .map(t -> t.tokenText().toFloat())
-                  .toImmutableSeq();
-              return new DetectTask.Point(nums.get(0), nums.get(1), nums.get(2));
-            })
-            .toImmutableSeq();
-
+        // construct new task
         var detectTask = new DetectTask(
             taskID,
             wayPoints,
+            null,
             gimbal_pitch.toFloat(),
             drone_rotation.toFloat(),
             sample_rate.toInt(),
@@ -70,8 +85,6 @@ public interface Preparse {
       var cond = transition.child(BotPsiElementTypes.PAREN).child(BotPsiElementTypes.COND);
       var condId = cond.child(BotPsiElementTypes.ID).tokenText().toString();
       var argNode = cond.peekChild(BotPsiElementTypes.PAREN);
-      var arg = argNode != null ? argNode.child(BotPsiElementTypes.NUMBER).tokenText().toString() : null;
-
       var taskPair = transition.childrenOfType(BotPsiElementTypes.TASK_NAME)
           .map(GenericNode::tokenText)
           .map(StringSlice::toString)
@@ -79,8 +92,20 @@ public interface Preparse {
       var curr_task = taskPair.get(0);
       var next_task = taskPair.get(1);
 
-      var tran = new Task.Transition(condId, arg, curr_task, next_task);
-      taskMap.get(curr_task).transitions.add(tran);
+      if (argNode != null) {
+        var isArgID = argNode.peekChild(BotPsiElementTypes.ID);
+        if (isArgID != null) {
+          var arg = argNode.child(BotPsiElementTypes.ID).tokenText().toString();
+          var tran = new Task.Transition<String>(condId, arg, curr_task, next_task);
+          taskMap.get(curr_task).transitions.add(tran);
+        } else {
+          var arg = argNode.child(BotPsiElementTypes.NUMBER).tokenText().toDouble();
+          var tran = new Task.Transition<Double>(condId, arg, curr_task, next_task);
+          taskMap.get(curr_task).transitions.add(tran);
+
+        }
+      }
+
     }
 
     return startTaskID;
