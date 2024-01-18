@@ -24,4 +24,5 @@ lombok.config
 
 # output
 #postprocess/
+/*/out/
 

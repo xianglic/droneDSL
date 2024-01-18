@@ -67,7 +67,7 @@ public class Main {
   @NotNull
   private static Map<String, List<Pt>> readFromSharedDir() throws FileNotFoundException {
     // Read JSON from file
-    FileReader reader = new FileReader("shared_dir/coordinates.json");
+    FileReader reader = new FileReader("../shared_dir/coordinates.json");
     Type type = new TypeToken<Map<String, List<Pt>>>() {
     }.getType();
     Gson gson = new Gson();

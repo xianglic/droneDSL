@@ -8,7 +8,7 @@ dependencies {
   implementation(libs.aya.ipwrapper)
   implementation(project(":preprocess"))
   // Gson dependency
-  implementation ("com.google.code.gson:gson:2.8.9")
+  implementation ("com.google.code.gson:gson:2.10.1")
 }
 
 val genDir = file("src/main/gen")

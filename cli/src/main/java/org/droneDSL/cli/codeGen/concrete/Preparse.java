@@ -64,7 +64,6 @@ public interface Preparse {
         var detectTask = new DetectTask(
             taskID,
             wayPoints,
-            null,
             gimbal_pitch.toFloat(),
             drone_rotation.toFloat(),
             sample_rate.toInt(),
