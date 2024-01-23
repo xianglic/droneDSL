@@ -25,20 +25,29 @@ public class Main {
     try {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
       DocumentBuilder builder = factory.newDocumentBuilder();
+      Scanner scanner = new Scanner(System.in);
 
       // Replace this with your KML file path or an InputStream
       Document document = builder.parse(args[0]);
       NodeList placemarks = document.getElementsByTagName("Placemark");
       Map<String, List<Pt>> lineCoordinates = new HashMap<>();
 
-      int alt = 35;
+
+
       for (int i = 0; i < placemarks.getLength(); i++) {
 
         Node placemark = placemarks.item(i);
         if (placemark.getNodeType() == Node.ELEMENT_NODE) {
-          Element placemarkElement = (Element) placemark;
 
+          Element placemarkElement = (Element) placemark;
           String name = placemarkElement.getElementsByTagName("name").item(0).getTextContent();
+          // Prompt the user to enter a number
+          System.out.print("Please enter the altitude for " + name + " : \n");
+          // Read the number entered by the user
+          Double var = scanner.nextDouble();
+          String altitude = String.valueOf(var);
+          System.out.print("Entered " + altitude + " : \n");
+
           NodeList coordinateList = placemarkElement.getElementsByTagName("coordinates");
 
           String[] coordinates = coordinateList.item(0).getTextContent().trim().split("\\s+");
@@ -48,7 +57,8 @@ public class Main {
             if (coordinate_ele.length >= 2) { // Making sure there are at least longitude and latitude
               String longitude = coordinate_ele[0];
               String latitude = coordinate_ele[1];
-              String altitude = coordinate_ele.length > 2 ? coordinate_ele[2] : "Not provided";
+
+
               var pt = new Pt(longitude, latitude, altitude);
 
               coords.add(pt);
@@ -57,7 +67,6 @@ public class Main {
             lineCoordinates.put(name, coords);
           }
 
-          alt -= 10;
         }
       }
 
@@ -75,37 +84,7 @@ public class Main {
         writer.write(json);
       }
 
-
-//      NodeList coordinateList = document.getElementsByTagName("coordinates");
-//
-//      for (int i = 0; i < coordinateList.getLength(); i++) {
-//        if (i == 0) {
-//          System.out.println("takeoff");
-//        } else {
-//          System.out.println(String.format("task %s", i));
-//        }
-//
-//        StringBuilder str = new StringBuilder();
-//        str.append("[");
-//
-//        Element element = (Element) coordinateList.item(i);
-//        String coordinates = element.getTextContent().trim();
-//        String[] parts = coordinates.split("\\s+"); // Split by whitespace (spaces, newlines, etc.)
-//
-//        for (String part : parts) {
-//          String[] coords = part.split(",");
-//          double longitude = Double.parseDouble(coords[0]);
-//          double latitude = Double.parseDouble(coords[1]);
-////          double altitude = coords.length > 2 ? Double.parseDouble(coords[2]) : 0;
-//          double altitude = 25;
-//
-//          str.append(String.format("(%s, %s, %s),", longitude, latitude, altitude));
-//        }
-//
-//        str.deleteCharAt(str.length() - 1);
-//        str.append("]");
-//        System.out.println(str);
-//      }
+      scanner.close();
     } catch (Exception e) {
       e.printStackTrace();
     }

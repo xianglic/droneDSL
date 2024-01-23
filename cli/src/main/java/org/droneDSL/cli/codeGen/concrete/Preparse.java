@@ -57,7 +57,7 @@ public interface Preparse {
         } else {
           var wayPointsID = attrMap.get("way_points").child(BotPsiElementTypes.ANGLE_BRACKED).child(BotPsiElementTypes.NAME).tokenText().toString();
           wayPoints = Seq.wrapJava(waypointsMap.get(wayPointsID))
-              .map(pt -> new Task.Point(Float.parseFloat(pt.longitude()), Float.parseFloat(pt.latitude()), Float.parseFloat(pt.altitude())));
+              .map(pt -> new Task.Point(Double.parseDouble(pt.longitude()), Double.parseDouble(pt.latitude()), Double.parseDouble(pt.altitude())));
         }
 
         // construct new task

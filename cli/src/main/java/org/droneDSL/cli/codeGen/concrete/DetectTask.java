@@ -42,20 +42,46 @@ public class DetectTask extends Task {
                   self.taskMap["%s"] = self.%s
           """.formatted(taskID, gimbalPitch, droneRotation, sampleRate, hoverDelay, waypointsStr, taskID, taskID, taskID, taskID);
     } else {
+
       return """
                   # TASK%s
-                  kwargs.clear()
-                  kwargs["gimbal_pitch"] = "%s"
-                  kwargs["drone_rotation"] = "%s"
-                  kwargs["sample_rate"] = "%s"
-                  kwargs["hover_delay"] = "%s"
-                  kwargs["coords"] = "%s"
-                  kwargs["model"] = "%s"
-                  %s = DetectTask(self.drone, self.cloudlet, "%s", self.trigger_event_queue, transition_args_%s, **kwargs)
-                  self.taskMap["%s"] = %s
-          """.formatted(taskID, gimbalPitch, droneRotation, sampleRate, hoverDelay, waypointsStr, model, taskID, taskID, taskID, taskID, taskID);
-    }
+                  task_attr_%s = {}
+                  task_attr_%s["gimbal_pitch"] = "%s"
+                  task_attr_%s["drone_rotation"] = "%s"
+                  task_attr_%s["sample_rate"] = "%s"
+                  task_attr_%s["hover_delay"] = "%s"
+                  task_attr_%s["coords"] = "%s"
+                  task_attr_%s["model"] = "%s"
+          """.formatted(taskID, taskID, taskID, gimbalPitch, taskID, droneRotation, taskID, sampleRate, taskID, hoverDelay, taskID, waypointsStr, taskID, model)
+             + this.generateTaskTransCode() +
+          """
+                  self.taskMap["%s"] = self.TaskArguments(transition_attr_%s, task_attr_%s)
+          """.formatted(taskID, taskID, taskID);
 
+    }
+  }
+  private String generateTaskTransCode() {
+    var transitCode = new StringBuilder();
+    transitCode.append(String.format(
+            """
+                    transition_attr_%s = {}
+            """, taskID));
+
+    for (var trans : this.transitions){
+
+      if (trans.condArg() instanceof String){
+        transitCode.append(String.format(
+            """
+                    transition_attr_%s["%s"] = "%s"
+            """, taskID, trans.condID(), trans.condArg()));
+      } else{ // number
+        transitCode.append(String.format(
+            """
+                    transition_attr_%s["%s"] = %s
+            """, taskID, trans.condID(), trans.condArg()));
+      }
+    }
+    return transitCode.toString();
   }
 
 
