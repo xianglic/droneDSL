@@ -44,7 +44,7 @@ public interface Preparse {
 
         // waypoints
         var isWayPointsVar = attrMap.get("way_points").peekChild(BotPsiElementTypes.ANGLE_BRACKED);
-        ImmutableSeq<Task.Point> wayPoints;
+        ImmutableSeq<DetectTask.Point> wayPoints;
         if (isWayPointsVar == null) {
           wayPoints = attrMap.get("way_points").child(BotPsiElementTypes.SQUARE_BRACKED).childrenOfType(BotPsiElementTypes.PAREN).
               map(point -> {
@@ -57,7 +57,7 @@ public interface Preparse {
         } else {
           var wayPointsID = attrMap.get("way_points").child(BotPsiElementTypes.ANGLE_BRACKED).child(BotPsiElementTypes.NAME).tokenText().toString();
           wayPoints = Seq.wrapJava(waypointsMap.get(wayPointsID))
-              .map(pt -> new Task.Point(Double.parseDouble(pt.longitude()), Double.parseDouble(pt.latitude()), Double.parseDouble(pt.altitude())));
+              .map(pt -> new DetectTask.Point(Double.parseDouble(pt.longitude()), Double.parseDouble(pt.latitude()), Double.parseDouble(pt.altitude())));
         }
 
         // construct new task
@@ -72,7 +72,21 @@ public interface Preparse {
         );
         yield Tuple.of(taskID, detectTask);
       }
-      case Track -> throw new UnsupportedOperationException();
+      case Track -> {
+        var gimbal_pitch = attrMap.get("gimbal_pitch").child(BotPsiElementTypes.NUMBER).tokenText();
+        var model = attrMap.get("model").child(BotPsiElementTypes.NAME).tokenText();
+        var target_class = attrMap.get("class").child(BotPsiElementTypes.NAME).tokenText();
+
+        // construct new task
+        var trackTask = new TrackTask(
+            taskID,
+            gimbal_pitch.toFloat(),
+            target_class.toString(),
+            model.toString()
+        );
+        yield Tuple.of(taskID, trackTask);
+      }
+
     };
   }
 

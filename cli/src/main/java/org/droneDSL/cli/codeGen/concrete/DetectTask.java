@@ -9,8 +9,17 @@ public class DetectTask extends Task {
   public int hoverDelay;
   public String model;
 
+  public ImmutableSeq<Point> wayPoints;
+
+  public record Point(double x, double y, double z) {
+    public String toJson() {
+      return String.format("{'lng': %s, 'lat': %s, 'alt': %s}", x, y, z);
+    }
+  }
+
   public DetectTask(String taskID, ImmutableSeq<Point> wayPoints, float gimbalPitch, float droneRotation, int sampleRate, int hoverDelay, String model) {
-    super(taskID, wayPoints);
+    super(taskID);
+    this.wayPoints = wayPoints;
     this.gimbalPitch = gimbalPitch;
     this.droneRotation = droneRotation;
     this.sampleRate = sampleRate;
@@ -54,34 +63,11 @@ public class DetectTask extends Task {
                   task_attr_%s["model"] = "%s"
           """.formatted(taskID, taskID, taskID, gimbalPitch, taskID, droneRotation, taskID, sampleRate, taskID, hoverDelay, taskID, waypointsStr, taskID, model)
              + this.generateTaskTransCode() +
-          """
-                  self.taskMap["%s"] = self.TaskArguments(transition_attr_%s, task_attr_%s)
-          """.formatted(taskID, taskID, taskID);
+             """
+                   self.task_arg_map["%s"] = self.TaskArguments(self.TaskType.Detect, transition_attr_%s, task_attr_%s)
+           """.formatted(taskID, taskID, taskID);
 
     }
-  }
-  private String generateTaskTransCode() {
-    var transitCode = new StringBuilder();
-    transitCode.append(String.format(
-            """
-                    transition_attr_%s = {}
-            """, taskID));
-
-    for (var trans : this.transitions){
-
-      if (trans.condArg() instanceof String){
-        transitCode.append(String.format(
-            """
-                    transition_attr_%s["%s"] = "%s"
-            """, taskID, trans.condID(), trans.condArg()));
-      } else{ // number
-        transitCode.append(String.format(
-            """
-                    transition_attr_%s["%s"] = %s
-            """, taskID, trans.condID(), trans.condArg()));
-      }
-    }
-    return transitCode.toString();
   }
 
 
