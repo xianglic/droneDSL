@@ -233,14 +233,14 @@ public class BotPsiParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // MISSION_START_KW <<braced task_name>>
+  // MISSION_START_KW task_name
   public static boolean mission_start_decl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mission_start_decl")) return false;
     if (!nextTokenIs(b, MISSION_START_KW)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, MISSION_START_KW);
-    r = r && braced(b, l + 1, BotPsiParser::task_name);
+    r = r && task_name(b, l + 1);
     exit_section_(b, m, MISSION_START_DECL, r);
     return r;
   }

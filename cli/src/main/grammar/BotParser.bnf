@@ -33,7 +33,7 @@ name ::= ID
 // defining the mission
 mission ::= MISSION_KW <<braced mission_content>>
 mission_content ::= mission_start_decl mission_transition*
-mission_start_decl ::= MISSION_START_KW <<braced task_name>>
+mission_start_decl ::= MISSION_START_KW task_name
 mission_transition ::= TRANSITION_KW <<paren cond>> task_name ARROW task_name
 cond ::= ID <<paren (NUMBER | ID) >>?
 
