@@ -59,7 +59,7 @@ public final class AST {
             def define_mission(transitMap, task_arg_map):
                 #define transition
                 logger.info("MissionController: define the transitMap\\n")
-                        
+                transitMap["start"] = MissionCreator.start_transit        
         """);
     missionTask.append(String.format("""
                 # define task
@@ -83,7 +83,7 @@ public final class AST {
 
 
       missionTrans.append(String.format("""
-                  transitMap["%s"]= %s_transit
+                  transitMap["%s"]= MissionCreator.%s_transit
           """, taskID, taskID));
 
       missionTask.append(taskContent.generateDefineTaskCode(this.isSteelEagle));
@@ -105,7 +105,7 @@ public final class AST {
         """);
 
     missionTrans.append("""
-                transitMap["default"]= default_transit
+                transitMap["default"]= MissionCreator.default_transit
         """);
 
     return
