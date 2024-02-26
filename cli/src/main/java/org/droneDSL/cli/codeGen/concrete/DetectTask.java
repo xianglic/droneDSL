@@ -64,7 +64,7 @@ public class DetectTask extends Task {
           """.formatted(taskID, taskID, taskID, gimbalPitch, taskID, droneRotation, taskID, sampleRate, taskID, hoverDelay, taskID, waypointsStr, taskID, model)
              + this.generateTaskTransCode() +
              """
-                   self.task_arg_map["%s"] = self.TaskArguments(self.TaskType.Detect, transition_attr_%s, task_attr_%s)
+                   task_arg_map["%s"] = TaskArguments(TaskType.Detect, transition_attr_%s, task_attr_%s)
            """.formatted(taskID, taskID, taskID);
 
     }

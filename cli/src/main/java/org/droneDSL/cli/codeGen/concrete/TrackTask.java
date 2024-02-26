@@ -36,7 +36,7 @@ public class TrackTask extends Task {
           """.formatted(taskID, taskID, taskID, model, taskID, target_class, taskID, gimbalPitch)
              + this.generateTaskTransCode() +
              """
-                   self.task_arg_map["%s"] = self.TaskArguments(self.TaskType.Track, transition_attr_%s, task_attr_%s)
+                   task_arg_map["%s"] = TaskArguments(TaskType.Track, transition_attr_%s, task_attr_%s)
            """.formatted(taskID, taskID, taskID);
 
     }

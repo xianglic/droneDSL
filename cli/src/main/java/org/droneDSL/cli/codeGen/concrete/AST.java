@@ -32,8 +32,9 @@ public final class AST {
       Files.writeString(root.resolve("DetectTask.py"), detectTaskContent());
     } else {
       var root = pRoot.resolve("steel-eagle/runtime");
-      Files.createDirectories(Files.readSymbolicLink(root));
-      Files.writeString(root.resolve("MissionController.py"), missionControllerContent(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+      Files.createDirectories(root);
+//      Files.createDirectories(Files.readSymbolicLink(root));
+      Files.writeString(root.resolve("MissionCreator.py"), missionControllerContent(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     }
 
   }
@@ -44,22 +45,25 @@ public final class AST {
     StringBuilder missionTrans = new StringBuilder();
     StringBuilder missionTask = new StringBuilder();
 
-    staticMethod.append("""
+    staticMethod.append(String.format("""
             # transition
-        """);
+            @staticmethod
+            def start_transit(triggered_event):
+                logger.info("start_transit\\n")
+                return "%s"
+        """, this.startTaskID));
 
     missionTrans.append("""
             #task
-            def define_mission(self):
-            
+            @staticmethod
+            def define_mission(transitMap, task_arg_map):
                 #define transition
-                print("MissionController: define the transitMap\\n")
+                logger.info("MissionController: define the transitMap\\n")
                         
         """);
     missionTask.append(String.format("""
                 # define task
-                print("MissionController: define the tasks\\n")
-                self.start_task_id = "%s"
+                logger.info("MissionController: define the tasks\\n")
         """, this.startTaskID));
 
 
@@ -79,7 +83,7 @@ public final class AST {
 
 
       missionTrans.append(String.format("""
-                  self.transitMap["%s"]= self.%s_transit
+                  transitMap["%s"]= %s_transit
           """, taskID, taskID));
 
       missionTask.append(taskContent.generateDefineTaskCode(this.isSteelEagle));
@@ -97,107 +101,24 @@ public final class AST {
     staticMethod.append("""
             @staticmethod
             def default_transit(triggered_event):
-                print(f"MissionController: no matched up transition, triggered event {triggered_event}\\n", triggered_event)
+                logger.info(f"MissionController: no matched up transition, triggered event {triggered_event}\\n", triggered_event)
         """);
 
     missionTrans.append("""
-                self.transitMap["default"]= self.default_transit
+                transitMap["default"]= default_transit
         """);
 
     return
         """
-            from task_defs.TrackTask import TrackTask
-            from task_defs.DetectTask import DetectTask
-            from runtime.MissionRunner import MissionRunner
-            from enum import Enum
-            import threading
-            import queue
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.setLevel(logging.INFO)
+            from interfaces.Task import TaskArguments, TaskType
                         
                         
-            class MissionController(threading.Thread):
-                class TaskType(Enum):
-                    Detect = 1
-                    Track = 2
-                        
-                class TaskArguments():
-                    def __init__(self, task_type, transitions_attributes, task_attributes):
-                        self.task_type = task_type
-                        self.task_attributes = task_attributes
-                        self.transitions_attributes = transitions_attributes
-                        
-                        
-                def __init__(self, drone, cloudlet):
-                    super().__init__()
-                    self.trigger_event_queue = queue.Queue()
-                    self.drone = drone
-                    self.cloudlet = cloudlet
-                    self.start_task_id = None
-                    self.transitMap = {}
-                    self.task_arg_map = {}
-            """ + staticMethod + missionTrans + missionTask+ """
-                          
-                def create_task(self, task_id):
-                    if (task_id in self.task_arg_map.keys()):
-                        if (self.task_arg_map[task_id].task_type == self.TaskType.Detect):
-                            return DetectTask(self.drone, self.cloudlet, task_id, self.trigger_event_queue, self.task_arg_map[task_id])
-                        elif (self.task_arg_map[task_id].task_type == self.TaskType.Track):
-                            return TrackTask(self.drone, self.cloudlet, task_id, self.trigger_event_queue, self.task_arg_map[task_id])
-                   \s
-                    return None
-                       \s
-                def next_task(self, current_task_id, triggered_event):
-                    next_task_id  = self.transitMap.get(current_task_id, self.default_transit)(triggered_event)
-                    return next_task_id
-                        
-                def run(self):
-                    # start the mc
-                    print("MissionController: hi start the controller\\n")
-                        
-                    print("MissionController: define mission \\n")
-                    self.define_mission()
-                        
-                    # init the mission runner
-                    print("MissionController: init the mission runner\\n")
-                    mr = MissionRunner(self.drone)
-                   \s
-                    mr.start()
-                    start_task = self.create_task(self.start_task_id)
-                    if start_task != None:
-                        mr.start_mission(start_task)
-                   \s
-                        
-                    # main logic check the triggered event
-                    while True:
-                        item = self.trigger_event_queue.get()
-                        
-                        if item is not None:
-                            task_id = item[0]
-                            trigger_event = item[1]
-                            print(f"MissionController: Trigger one event! \\n")
-                            print(f"MissionController: Task id  {task_id} \\n")
-                            print(f"MissionController: event   {trigger_event} \\n")
-                            if (task_id == mr.get_current_task()):
-                                next_task_id = self.next_task(task_id, trigger_event)
-                                if (next_task_id == "terminate"):
-                                    break
-                                else:
-                                    next_task = self.create_task(next_task_id)
-                                    mr.transit_to(next_task)
-                        
-                    # terminate the mr
-                    print(f"MissionController: the current task is done, terminate the MISSION RUNNER \\n")
-                    mr.end_mission()
-                        
-                    #end the mc
-                    print("MissionController: terminate the controller\\n")
-                        
-                        
-                        
-                        
+            class MissionCreator:
 
-
-
-            """;
+            """ + staticMethod + missionTrans + missionTask;
   }
 
   private String detectTaskContent() {
