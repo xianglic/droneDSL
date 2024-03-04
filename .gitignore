@@ -24,4 +24,4 @@ lombok.config
 
 # output
 /*/out/
-/shared_dir/*
+shared_dir/*
