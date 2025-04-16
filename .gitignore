@@ -25,8 +25,11 @@ lombok.config
 # output
 /*/out/
 
-# keep the shared_dir but ignores all the files
-/shared_dir/*
-!/shared_dir/.gitkeep
+# mission creator
+python/user/project/implementation/Mission.py
+python/user/project/implementation/requirements.txt
+
+# keep the gradle wrapper
+!/gradle/wrapper/*.jar
 
 
