@@ -32,6 +32,7 @@ python/project/requirements.txt
 
 # keep the gradle wrapper
 !/gradle/wrapper/*.jar
+*.jar
 
 
 
