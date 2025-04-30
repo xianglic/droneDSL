@@ -6,7 +6,7 @@ plugins {
 
 allprojects {
   group = "org.droneDSL"
-  version = "1.0"
+  version = "1.5"
 }
 
 subprojects {
@@ -19,8 +19,6 @@ subprojects {
 
   val javaVersion = 17
   java {
-    withSourcesJar()
-    if (hasProperty("release")) withJavadocJar()
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
     toolchain {
@@ -42,11 +40,6 @@ subprojects {
       release.set(javaVersion)
       compilerArgs.addAll(listOf("-Xlint:unchecked"))
     }
-  }
-
-  tasks.withType<Test>().configureEach {
-    useJUnitPlatform()
-    enableAssertions = true
   }
 
   tasks.withType<JavaExec>().configureEach { enableAssertions = true }
