@@ -5,7 +5,7 @@ import kala.collection.immutable.ImmutableSeq;
 public class TestTask extends Task {
 
 
-  public TestTask(String taskID, ImmutableSeq<Point> wayPoints) {
+  public TestTask(String taskID, String wayPoints) {
     super(taskID);
     this.wayPoints = wayPoints;
   }
@@ -17,12 +17,11 @@ public class TestTask extends Task {
 
   @Override
   public String generateDefineTaskCode() {
-    var waypointsStr = wayPoints.joinToString(",", "[", "]", Point::toJson);
     return """
                 # TASK%s
                 task_attr_%s = {}
                 task_attr_%s["coords"] = "%s"
-        """.formatted(taskID, taskID, taskID, waypointsStr)
+        """.formatted(taskID, taskID, taskID, wayPoints)
            + this.generateTaskTransCode() +
            """
                  task_arg_map["%s"] = TaskArguments(TaskType.Test, transition_attr_%s, task_attr_%s)

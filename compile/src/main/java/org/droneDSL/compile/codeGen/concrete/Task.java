@@ -17,7 +17,7 @@ public abstract class Task {
   }
 
 
-  public ImmutableSeq<Point> wayPoints;
+  public String wayPoints;
   public record Point(double x, double y, double z) {
     public String toJson() {
       return String.format("{'lng': %s, 'lat': %s, 'alt': %s}", x, y, z);

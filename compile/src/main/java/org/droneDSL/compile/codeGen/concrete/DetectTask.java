@@ -13,7 +13,7 @@ public class DetectTask extends Task {
   public HSV upperBound;
 
 
-  public DetectTask(String taskID, ImmutableSeq<Point> wayPoints, float gimbalPitch, float droneRotation, int sampleRate, int hoverDelay, String model, HSV lowerBound, HSV upperBound) {
+  public DetectTask(String taskID, String wayPoints, float gimbalPitch, float droneRotation, int sampleRate, int hoverDelay, String model, HSV lowerBound, HSV upperBound) {
     super(taskID);
     this.wayPoints = wayPoints;
     this.gimbalPitch = gimbalPitch;
@@ -37,7 +37,6 @@ public class DetectTask extends Task {
 
   @Override
   public String generateDefineTaskCode() {
-    var waypointsStr = wayPoints.joinToString(",", "[", "]", Point::toJson);
     return """
                 # TASK%s
                 task_attr_%s = {}
@@ -49,7 +48,7 @@ public class DetectTask extends Task {
                 task_attr_%s["model"] = "%s"
                 task_attr_%s["upper_bound"] = %s
                 task_attr_%s["lower_bound"] = %s
-        """.formatted(taskID, taskID, taskID, gimbalPitch, taskID, droneRotation, taskID, sampleRate, taskID, hoverDelay, taskID, waypointsStr, taskID, model, taskID, upperBound.toString(), taskID, lowerBound.toString())
+        """.formatted(taskID, taskID, taskID, gimbalPitch, taskID, droneRotation, taskID, sampleRate, taskID, hoverDelay, taskID, wayPoints, taskID, model, taskID, upperBound.toString(), taskID, lowerBound.toString())
             + this.generateTaskTransCode() +
             """
                   task_arg_map["%s"] = TaskArguments(TaskType.Detect, transition_attr_%s, task_attr_%s)
