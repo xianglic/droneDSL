@@ -1,11 +1,8 @@
 package org.droneDSL.compile;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import kala.collection.immutable.ImmutableMap;
 import org.droneDSL.compile.codeGen.concrete.MissionPlan;
 import org.droneDSL.compile.codeGen.concrete.Parse;
-import org.droneDSL.compile.codeGen.concrete.Task;
-import org.droneDSL.compile.parser.BotPsiElementTypes;
 import org.droneDSL.compile.preprocess.partition.Partition;
 import org.droneDSL.compile.preprocess.partition.CorridorPartition;
 import org.droneDSL.compile.preprocess.partition.SurveyPartition;
@@ -31,8 +28,6 @@ import org.locationtech.jts.geom.*;
 @CommandLine.Command(name = "DroneDSL Compiler", version = "DroneDSL Compiler 2.0",
     mixinStandardHelpOptions = true)
 public class Compiler implements Runnable {
-   public record Pt(@NotNull String longitude, @NotNull String latitude, @NotNull String altitude) {
-   }
    private static class PartitionConfig {
     @CommandLine.Option(names = {"-p", "--PartitionType"}, defaultValue = "corridor",
         description = "Type of partitioning algorithm (corridor or survey)")
@@ -81,7 +76,7 @@ public class Compiler implements Runnable {
   public void run() {
     // preprocess - partition waypoints
     Partition partitionAlgo = getPartitionAlgo(PartitionConfig);
-    var wayPointsMap = getWayPointsMap(partitionAlgo, KMLFilePath);
+    var wayPointsMap = getPartitionedGeoPointsMap(partitionAlgo, KMLFilePath);
     try {
       writeToJsonFile(wayPointsMap, WayPointsMapPath);
     } catch (IOException e) {
@@ -158,23 +153,25 @@ public class Compiler implements Runnable {
     return partitionAlgo;
   }
 
-  private Map<String, List<Coordinate>> getWayPointsMap(Partition partitionAlgo, String kmlFilePath){
-    Map<String, List<Coordinate>> partitionedGEOWayPointsMap = new HashMap<>();
-    Map<String, GeoPoints> geoWayPointsMap = WaypointsUtils.parseKMLFile(kmlFilePath);
-    for (String area : geoWayPointsMap.keySet()){
+  private Map<String, GeoPoints> getPartitionedGeoPointsMap(Partition partitionAlgo, String kmlFilePath){
+    Map<String, GeoPoints> rawGeoPointsMap = WaypointsUtils.parseKMLFile(kmlFilePath);
+    Map<String, GeoPoints> partitionedGeoWayPointsMap = new HashMap<>();
+    for (String area : rawGeoPointsMap.keySet()){
       // create a polygon
-      GeoPoints geoPoints = geoWayPointsMap.get(area);
-      List<Coordinate> coordPoints = partitionAlgo.generateTransectsAndPoints(geoPoints.toPolygon());
-      partitionedGEOWayPointsMap.put(area, coordPoints);
+      GeoPoints geoPoints = rawGeoPointsMap.get(area);
+      Polygon projectedPolygon = geoPoints.toProjectedPolygon();
+      GeoPoints partitionedGeoPoints = partitionAlgo.generateTransectsAndPoints(projectedPolygon);
+      GeoPoints finalGeoPoints = partitionedGeoPoints.inverseProjectFrom(geoPoints.getCentroid());
+      partitionedGeoWayPointsMap.put(area, finalGeoPoints);
     }
-    return partitionedGEOWayPointsMap;
+    return partitionedGeoWayPointsMap;
   }
 
-  public static void writeToJsonFile(Map<String, List<Coordinate>> map, String filePath) throws IOException {
+  public static void writeToJsonFile(Map<String, GeoPoints> map, String filePath) throws IOException {
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     Map<String, List<double[]>> jsonCompatibleMap = new HashMap<>();
-    for (Map.Entry<String, List<Coordinate>> entry : map.entrySet()) {
+    for (Map.Entry<String, GeoPoints> entry : map.entrySet()) {
       List<double[]> coords = new ArrayList<>();
       for (Coordinate c : entry.getValue()) {
         coords.add(new double[]{c.x, c.y});

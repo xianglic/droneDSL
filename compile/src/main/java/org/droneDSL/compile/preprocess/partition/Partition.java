@@ -1,5 +1,6 @@
 package org.droneDSL.compile.preprocess.partition;
 
+import org.droneDSL.compile.preprocess.waypoints.GeoPoints;
 import org.locationtech.jts.geom.*;
 import java.util.List;
 
@@ -12,5 +13,5 @@ public abstract class Partition {
     this.angleDegrees = angleDegrees;
   }
 
-  public abstract List<Coordinate> generateTransectsAndPoints(Polygon polygon);
+  public abstract GeoPoints generateTransectsAndPoints(Polygon polygon);
 }

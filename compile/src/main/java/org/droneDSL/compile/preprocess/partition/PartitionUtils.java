@@ -6,6 +6,28 @@ import java.util.List;
 
 public class PartitionUtils {
 
+  public static List<LineSegment> generateTransects(Polygon polygon, double spacing, double angleDegrees) {
+    Envelope bounds = polygon.getEnvelopeInternal();
+    double maxLength = Math.max(bounds.getWidth(), bounds.getHeight()) + 100;
+    double angleRadians = Math.toRadians(angleDegrees);
+    Coordinate center = bounds.centre();
+
+    List<LineSegment> transects = new ArrayList<>();
+    double offset = -maxLength;
+
+    while (offset <= maxLength) {
+      double x = bounds.getMinX() + offset;
+
+      Coordinate p1 = rotatePoint(x, bounds.getMinY() - maxLength, center, angleRadians);
+      Coordinate p2 = rotatePoint(x, bounds.getMaxY() + maxLength, center, angleRadians);
+
+      transects.add(new LineSegment(roundPoint(p1), roundPoint(p2)));
+      offset += spacing;
+    }
+
+    return transects;
+  }
+
   public static Coordinate rotatePoint(double x, double y, Coordinate center, double angleRad) {
     double dx = x - center.x;
     double dy = y - center.y;
