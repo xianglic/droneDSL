@@ -36,4 +36,5 @@ python/project/requirements.txt
 *.dsl
 *.kml
 *.ms
+*.json
 

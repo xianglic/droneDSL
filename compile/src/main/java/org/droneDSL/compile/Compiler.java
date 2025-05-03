@@ -27,6 +27,7 @@ import org.locationtech.jts.geom.*;
 
 @CommandLine.Command(name = "DroneDSL Compiler", version = "DroneDSL Compiler 2.0",
     mixinStandardHelpOptions = true)
+
 public class Compiler implements Runnable {
    private static class PartitionConfig {
     @CommandLine.Option(names = {"-p", "--PartitionType"}, defaultValue = "corridor",
@@ -41,7 +42,7 @@ public class Compiler implements Runnable {
 
     @CommandLine.Option(names = "--trigger", description = "Trigger distance for survey mode", defaultValue = "5")
     double triggerDistance;
-  }
+   }
 
   @CommandLine.Option(names = {"-k", "--KMLFilePath"}, paramLabel = "<KMLFilePath>",
       defaultValue = "null",
@@ -51,22 +52,18 @@ public class Compiler implements Runnable {
       defaultValue = "./way_points_map.json",
       description = "File Path of the KML file")
   String WayPointsMapPath;
-
   @CommandLine.Option(names = {"-s", "--DSLScriptPath"}, paramLabel = "<DSLScriptPath>",
       defaultValue = "null",
       description = "File Path of the DSL script")
   String DSLScriptPath;
-
   @CommandLine.Option(names = {"-o", "--OutputFilePath"}, paramLabel = "<OutputFilePath>",
       defaultValue =
           "./flightplan", description = "output file path")
   String OutputFilePath = "./flightplan";
-
   @CommandLine.Option(names = {"-l", "--Language"}, paramLabel = "<Language>", defaultValue =
       "python/project",
       description = "compiled code platform")
   String Platform = "python/project";
-
   @CommandLine.ArgGroup(exclusive = false, heading = "Partitioning Options%n")
   PartitionConfig PartitionConfig;
 
@@ -76,7 +73,8 @@ public class Compiler implements Runnable {
   public void run() {
     // preprocess - partition waypoints
     Partition partitionAlgo = getPartitionAlgo(PartitionConfig);
-    var wayPointsMap = getPartitionedGeoPointsMap(partitionAlgo, KMLFilePath);
+    Map<String, GeoPoints> rawGeoPointsMap = WaypointsUtils.parseKMLFile(KMLFilePath);
+    var wayPointsMap = getPartitionedGeoPointsMap(partitionAlgo, rawGeoPointsMap);
     try {
       writeToJsonFile(wayPointsMap, WayPointsMapPath);
     } catch (IOException e) {
@@ -153,8 +151,7 @@ public class Compiler implements Runnable {
     return partitionAlgo;
   }
 
-  private Map<String, GeoPoints> getPartitionedGeoPointsMap(Partition partitionAlgo, String kmlFilePath){
-    Map<String, GeoPoints> rawGeoPointsMap = WaypointsUtils.parseKMLFile(kmlFilePath);
+  public static Map<String, GeoPoints> getPartitionedGeoPointsMap(Partition partitionAlgo, Map<String, GeoPoints> rawGeoPointsMap){
     Map<String, GeoPoints> partitionedGeoWayPointsMap = new HashMap<>();
     for (String area : rawGeoPointsMap.keySet()){
       // create a polygon
@@ -169,7 +166,6 @@ public class Compiler implements Runnable {
 
   public static void writeToJsonFile(Map<String, GeoPoints> map, String filePath) throws IOException {
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
     Map<String, List<double[]>> jsonCompatibleMap = new HashMap<>();
     for (Map.Entry<String, GeoPoints> entry : map.entrySet()) {
       List<double[]> coords = new ArrayList<>();
@@ -178,7 +174,6 @@ public class Compiler implements Runnable {
       }
       jsonCompatibleMap.put(entry.getKey(), coords);
     }
-
     try (FileWriter writer = new FileWriter(filePath)) {
       gson.toJson(jsonCompatibleMap, writer);
     }
@@ -186,7 +181,6 @@ public class Compiler implements Runnable {
   private static void addToZipFile(String sourceDir, String insideZipDir, ZipOutputStream zos) throws IOException {
     File dir = new File(sourceDir);
     File[] files = dir.listFiles();
-
     // Check if the directory exists and contains files
     if (files != null) {
       for (File file : files) {
