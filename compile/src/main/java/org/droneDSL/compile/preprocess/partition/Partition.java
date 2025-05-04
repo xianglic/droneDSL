@@ -13,5 +13,5 @@ public abstract class Partition {
     this.angleDegrees = angleDegrees;
   }
 
-  public abstract GeoPoints generateTransectsAndPoints(Polygon polygon);
+  public abstract List<GeoPoints> generatePartitionedGeoPoints(Polygon polygon);
 }

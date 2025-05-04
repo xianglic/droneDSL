@@ -1,5 +1,3 @@
-
-
 package org.droneDSL.compile.preprocess.Visualizer;
 
 import org.droneDSL.compile.Compiler;
@@ -97,9 +95,20 @@ public class Visualizer extends JPanel implements MouseMotionListener {
       g2.draw(path);
     }
 
-    // Draw waypoint points
-    g2.setColor(Color.RED);
+    // Draw waypoint paths and points
     for (List<Coordinate> coords : allCoordinates) {
+      if (coords.size() >= 2) {
+        g2.setColor(Color.ORANGE);
+        Path2D path = new Path2D.Double();
+        path.moveTo(coords.get(0).x * scaleX, coords.get(0).y * scaleY);
+        for (int i = 1; i < coords.size(); i++) {
+          path.lineTo(coords.get(i).x * scaleX, coords.get(i).y * scaleY);
+        }
+        g2.draw(path);
+      }
+
+      // Draw points
+      g2.setColor(Color.RED);
       for (Coordinate c : coords) {
         double x = c.x * scaleX;
         double y = c.y * scaleY;
@@ -131,23 +140,27 @@ public class Visualizer extends JPanel implements MouseMotionListener {
   public void mouseDragged(MouseEvent e) {}
 
   public static void main(String[] args) {
-    String kmlPath = "./example/tst.kml";
+    String kmlPath = "./example/hex.kml";
     double spacing = 3;
     double angle = 100;
     double trigger = 1;
-    Partition partition = new SurveyPartition(spacing, angle, trigger);
+
+    Partition partition = new CorridorPartition(spacing, angle); // Use SurveyPartition
 
     Map<String, GeoPoints> rawGeoPointsMap = WaypointsUtils.parseKMLFile(kmlPath);
-    Map<String, GeoPoints> partitionedMap = Compiler.getPartitionedGeoPointsMap(partition, rawGeoPointsMap);
+    Map<String, List<GeoPoints>> partitionedMap = Compiler.getPartitionedGeoPointsMap(partition, rawGeoPointsMap);
 
     List<Polygon> polygons = new ArrayList<>();
     List<List<Coordinate>> allWaypoints = new ArrayList<>();
 
     for (String area : rawGeoPointsMap.keySet()) {
       GeoPoints rawGeo = rawGeoPointsMap.get(area);
-      GeoPoints waypoints = partitionedMap.get(area);
+      List<GeoPoints> waypointsList = partitionedMap.get(area);
+
       polygons.add(rawGeo.toPolygon());
-      allWaypoints.add(waypoints);
+
+      // assuming GeoPoints has getCoordinates()
+      allWaypoints.addAll(waypointsList);
     }
 
     JFrame frame = new JFrame("Partition Visualizer - All Areas");
@@ -158,4 +171,3 @@ public class Visualizer extends JPanel implements MouseMotionListener {
     frame.setVisible(true);
   }
 }
-

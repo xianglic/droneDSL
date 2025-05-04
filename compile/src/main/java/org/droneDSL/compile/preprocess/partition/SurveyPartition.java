@@ -3,6 +3,7 @@ package org.droneDSL.compile.preprocess.partition;
 import org.droneDSL.compile.preprocess.waypoints.GeoPoints;
 import org.locationtech.jts.geom.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SurveyPartition extends Partition {
@@ -15,13 +16,15 @@ public class SurveyPartition extends Partition {
   }
 
   @Override
-  public GeoPoints generateTransectsAndPoints(Polygon polygon) {
-    GeoPoints output = new GeoPoints();
+  public List<GeoPoints> generatePartitionedGeoPoints(Polygon polygon) {
+
+    List<GeoPoints> result = new ArrayList<>();
     List<LineSegment> transects = PartitionUtils.generateTransects(polygon, spacing, angleDegrees);
 
     for (LineSegment line : transects) {
       List<Coordinate> intersections = PartitionUtils.getLinePolygonIntersections(line, polygon);
       if (intersections.size() >= 2) {
+        GeoPoints output = new GeoPoints();
         Coordinate start = intersections.get(0);
         Coordinate end = intersections.get(1);
         double totalDistance = start.distance(end);
@@ -40,9 +43,10 @@ public class SurveyPartition extends Partition {
             output.add(PartitionUtils.roundPoint(pt));
           }
         }
+        result.add(output);
       }
     }
 
-    return output;
+    return result;
   }
 }
