@@ -8,10 +8,14 @@ import java.util.List;
 
 public class SurveyPartition extends Partition {
 
+  private final double spacing;
+  private final double angleDegrees;
   private final double triggerDistance;
 
   public SurveyPartition(double spacing, double angleDegrees, double triggerDistance) {
-    super(spacing, angleDegrees);
+    super();
+    this.spacing = spacing;
+    this.angleDegrees = angleDegrees;
     this.triggerDistance = triggerDistance;
   }
 

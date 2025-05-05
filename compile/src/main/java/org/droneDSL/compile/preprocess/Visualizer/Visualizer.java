@@ -2,6 +2,7 @@ package org.droneDSL.compile.preprocess.Visualizer;
 
 import org.droneDSL.compile.Compiler;
 import org.droneDSL.compile.preprocess.partition.CorridorPartition;
+import org.droneDSL.compile.preprocess.partition.EdgePartition;
 import org.droneDSL.compile.preprocess.partition.Partition;
 import org.droneDSL.compile.preprocess.partition.SurveyPartition;
 import org.droneDSL.compile.preprocess.waypoints.GeoPoints;
@@ -145,7 +146,7 @@ public class Visualizer extends JPanel implements MouseMotionListener {
     double angle = 100;
     double trigger = 1;
 
-    Partition partition = new CorridorPartition(spacing, angle); // Use SurveyPartition
+    Partition partition = new EdgePartition(); // Use SurveyPartition
 
     Map<String, GeoPoints> rawGeoPointsMap = WaypointsUtils.parseKMLFile(kmlPath);
     Map<String, List<GeoPoints>> partitionedMap = Compiler.getPartitionedGeoPointsMap(partition, rawGeoPointsMap);

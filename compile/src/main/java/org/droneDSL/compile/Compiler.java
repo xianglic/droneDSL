@@ -179,26 +179,31 @@ public class Compiler implements Runnable {
 
   public static void writeToJsonFile(Map<String, List<GeoPoints>> map, String filePath) throws IOException {
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    Map<String, List<List<double[]>>> jsonCompatibleMap = new HashMap<>();
+    Map<String, Map<String, List<double[]>>> jsonStructuredMap = new HashMap<>();
 
     for (Map.Entry<String, List<GeoPoints>> entry : map.entrySet()) {
-      List<List<double[]>> geoList = new ArrayList<>();
+      String areaName = entry.getKey();
+      List<GeoPoints> geoPointsList = entry.getValue();
+      Map<String, List<double[]>> innerMap = new LinkedHashMap<>();
 
-      for (GeoPoints geo : entry.getValue()) {
+      for (int i = 0; i < geoPointsList.size(); i++) {
+        GeoPoints geo = geoPointsList.get(i);
         List<double[]> coords = new ArrayList<>();
         for (Coordinate c : geo) {
           coords.add(new double[]{c.x, c.y});
         }
-        geoList.add(coords);
+        String innerKey = areaName + "_" + (i + 1);
+        innerMap.put(innerKey, coords);
       }
 
-      jsonCompatibleMap.put(entry.getKey(), geoList);
+      jsonStructuredMap.put(areaName, innerMap);
     }
 
     try (FileWriter writer = new FileWriter(filePath)) {
-      gson.toJson(jsonCompatibleMap, writer);
+      gson.toJson(jsonStructuredMap, writer);
     }
   }
+
 
 
   private static void addToZipFile(String sourceDir, String insideZipDir, ZipOutputStream zos) throws IOException {

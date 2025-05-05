@@ -9,8 +9,13 @@ import java.util.List;
 
 public class CorridorPartition extends Partition {
 
+  private final double spacing;
+  private final double angleDegrees;
+
   public CorridorPartition(double spacing, double angleDegrees) {
-    super(spacing, angleDegrees);
+    super();
+    this.spacing = spacing;
+    this.angleDegrees = angleDegrees;
   }
 
   @Override
@@ -27,6 +32,7 @@ public class CorridorPartition extends Partition {
             PartitionUtils.projectOntoLine(pt, line.p0, line.p1)));
         output.add(intersections.get(0));
         output.add(intersections.get(intersections.size() - 1));
+        output.add(intersections.get(0));
         result.add(output);
       }
     }
