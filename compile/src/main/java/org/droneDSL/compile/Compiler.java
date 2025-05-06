@@ -204,8 +204,6 @@ public class Compiler implements Runnable {
     }
   }
 
-
-
   private static void addToZipFile(String sourceDir, String insideZipDir, ZipOutputStream zos) throws IOException {
     File dir = new File(sourceDir);
     File[] files = dir.listFiles();
