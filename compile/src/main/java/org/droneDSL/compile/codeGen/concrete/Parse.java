@@ -82,6 +82,12 @@ public interface Parse {
         var gimbal_pitch = attrMap.get("gimbal_pitch").child(BotPsiElementTypes.NUMBER).tokenText();
         var model = attrMap.get("model").child(BotPsiElementTypes.NAME).tokenText();
         var target_class = attrMap.get("class").child(BotPsiElementTypes.NAME).tokenText();
+        var altitude = attrMap.get("altitude").child(BotPsiElementTypes.NUMBER).tokenText();
+        var descent_speed = attrMap.get("descent_speed").child(BotPsiElementTypes.NUMBER).tokenText();
+        var orbit_speed = attrMap.get("orbit_speed").child(BotPsiElementTypes.NUMBER).tokenText();
+        var follow_speed = attrMap.get("follow_speed").child(BotPsiElementTypes.NUMBER).tokenText();
+        var yaw_speed = attrMap.get("yaw_speed").child(BotPsiElementTypes.NUMBER).tokenText();
+        var gimbal_offset = attrMap.get("gimbal_offset").child(BotPsiElementTypes.NUMBER).tokenText();
 
         // construct new task
         var trackTask = new TrackTask(
@@ -90,7 +96,13 @@ public interface Parse {
             target_class.toString(),
             model.toString(),
             hsv_lower_bound,
-            hsv_upper_bound
+            hsv_upper_bound,
+            altitude.toFloat(),
+            descent_speed.toFloat(),
+            orbit_speed.toFloat(),
+            follow_speed.toFloat(),
+            yaw_speed.toFloat(),
+            gimbal_offset.toFloat()
         );
         yield Tuple.of(taskID, trackTask);
       }
