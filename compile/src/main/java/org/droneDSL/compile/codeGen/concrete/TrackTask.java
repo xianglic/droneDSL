@@ -10,6 +10,7 @@ public class TrackTask extends Task {
   public HSV upperBound;
 
 
+
   public TrackTask(String taskID, float gimbalPitch, String target_class, String model, HSV lower_bound, HSV upper_bound) {
     super(taskID);
     this.gimbalPitch = gimbalPitch;
@@ -17,6 +18,7 @@ public class TrackTask extends Task {
     this.target_class = target_class;
     this.lowerBound = lower_bound;
     this.upperBound = upper_bound;
+
   }
 
   @Override
