@@ -114,6 +114,7 @@ class TrackTask(Task):
         await self.control.configure_compute(model, lower_bound, upper_bound)
 
         # get the task attributes
+        logger.info(''f"Starting track task with attributes: {self.task_attributes}")
         target = self.task_attributes["class"]
         altitude = self.task_attributes["altitude"]
         descent_speed = self.task_attributes["descent_speed"]
@@ -121,10 +122,12 @@ class TrackTask(Task):
         follow_speed = self.task_attributes["follow_speed"]
         yaw_speed = self.task_attributes["yaw_speed"]
         gimbal_offset = self.task_attributes["gimbal_offset"]
+    
 
         self.create_transition()
         last_seen = None
         descended = False
+        logger.info(f"Starting track task loop")
         while True:
             logger.info("Awaiting compute result")
             response = await self.data.get_compute_result("openscout-object")
@@ -133,7 +136,7 @@ class TrackTask(Task):
                 continue
 
             detections = result[0].generic_result
-            logger.info(f"{detections=}")
+            #logger.info(f"{detections=}")
             try:
                 detections = json.loads(detections)
             except Exception as e:
