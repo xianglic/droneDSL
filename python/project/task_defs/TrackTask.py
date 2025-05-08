@@ -131,6 +131,7 @@ class TrackTask(Task):
         while True:
             logger.info("Awaiting compute result")
             response = await self.data.get_compute_result("openscout-object")
+            logger.info(f"Got compute result {response}")
             result = response.cpt.result
             if len(result) == 0:
                 continue
