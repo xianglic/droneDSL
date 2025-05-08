@@ -92,7 +92,7 @@ class TrackTask(Task):
         gimbal_error = target_pitch_angle
         follow_error = await self.estimate_distance(target_yaw_angle, target_bottom_pitch_angle)
 
-        return (follow_error, yaw_error, gimbal_error)
+        return (follow_error[1] * -1, yaw_error, gimbal_error)
 
     def clamp(self, value, minimum, maximum):
         return np.clip(value, minimum, maximum)
@@ -102,7 +102,7 @@ class TrackTask(Task):
         telemetry = await self.data.get_telemetry()
         prev_gimbal = telemetry["gimbal_pose"]["pitch"]
         await self.control.set_velocity_body(follow_vel, orbit_speed, -1 * descent_speed, yaw_vel)
-        #await self.control.set_gimbal_pose(gimbal_offset + prev_gimbal)
+        #await self.control.set_gimbal_pose(gimbal_offset + prev_gimbal, 0.0, 0.0)
 
     ''' Main Logic '''
     @Task.call_after_exit
@@ -114,11 +114,11 @@ class TrackTask(Task):
         await self.control.configure_compute(model, lower_bound, upper_bound)
 
         target = self.task_attributes["class"]
-        altitude = 10
+        altitude = 5
         descent_speed = 5
-        orbit_speed = 2
-        follow_speed = 2
-        yaw_speed = 1
+        orbit_speed = 1
+        follow_speed = 1
+        yaw_speed = 100
         gimbal_offset = 0
 
         self.create_transition()
@@ -172,7 +172,8 @@ class TrackTask(Task):
                 except Exception as e:
                     logger.error(f"Failed to clamp, reason: {e}")
                 try:
-                    if descended:
+                    logger.info(f"forward {follow_vel}, yaw {yaw_vel}, gimbal {gimbal_offset}, orbit {orbit_speed} descent {descent_speed}")
+                    if not descended:
                         await self.actuate(0.0, yaw_vel, gimbal_offset, 0.0, descent_speed)
                     else:
                         await self.actuate(follow_vel, yaw_vel, gimbal_offset, orbit_speed, 0.0)

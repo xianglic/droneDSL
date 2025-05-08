@@ -16,10 +16,10 @@ class DetectTask(Task):
 
     def __init__(self, control, data, task_id, trigger_event_queue, task_args):
         super().__init__(control, data, task_id, trigger_event_queue, task_args)
-       
-        
+
+
     def create_transition(self):
-        
+
         logger.info(f"**************Detect Task {self.task_id}: create transition! **************\n")
         logger.info(self.transitions_attributes)
         args = {
@@ -28,14 +28,14 @@ class DetectTask(Task):
             'trans_active_lock': self.trans_active_lock,
             'trigger_event_queue': self.trigger_event_queue
         }
-        
+
         # triggered event
         if ("timeout" in self.transitions_attributes):
             logger.info(f"**************Detect Task {self.task_id}:  timer transition! **************\n")
             timer = TimerTransition(args, self.transitions_attributes["timeout"])
             timer.daemon = True
             timer.start()
-            
+
         if ("object_detection" in self.transitions_attributes):
             logger.info(f"**************Detect Task {self.task_id}:  object detection transition! **************\n")
             self.data.clearResults("openscout-object")
@@ -49,11 +49,10 @@ class DetectTask(Task):
             hsv = HSVDetectionTransition(args, self.transitions_attributes["hsv_detection"], self.data)
             hsv.daemon = True
             hsv.start()
-    
+
     @Task.call_after_exit
     async def run(self):
         # init the data
-        logger.info("test, for pullin3")
         model = self.task_attributes["model"]
         lower_bound = self.task_attributes["lower_bound"]
         upper_bound = self.task_attributes["upper_bound"]

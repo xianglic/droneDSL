@@ -38,3 +38,5 @@ python/project/requirements.txt
 *.ms
 *.json
 
+*swp
+*~
