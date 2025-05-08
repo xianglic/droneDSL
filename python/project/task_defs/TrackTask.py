@@ -75,9 +75,9 @@ class TrackTask(Task):
         target_dir = r.as_matrix().dot(vf)
         target_vec = self.find_intersection(target_dir, np.array([0, 0, alt]))
 
-        logger.info(f"[TrackTask]: Distance estimation: {np.linalg.norm(target_vec)}")
+        #logger.info(f"[TrackTask]: Distance estimation: {np.linalg.norm(target_vec)}")
         leash_vec = self.leash_length * (target_vec / np.linalg.norm(target_vec))
-        logger.info(f"[TrackTask]: Error vector length: {np.linalg.norm(leash_vec - target_vec)}")
+        #logger.info(f"[TrackTask]: Error vector length: {np.linalg.norm(leash_vec - target_vec)}")
         return leash_vec - target_vec
 
     async def error(self, box):
@@ -122,16 +122,13 @@ class TrackTask(Task):
         follow_speed = self.task_attributes["follow_speed"]
         yaw_speed = self.task_attributes["yaw_speed"]
         gimbal_offset = self.task_attributes["gimbal_offset"]
-    
 
         self.create_transition()
         last_seen = None
         descended = False
         logger.info(f"Starting track task loop")
         while True:
-            logger.info("Awaiting compute result")
             response = await self.data.get_compute_result("openscout-object")
-            logger.info(f"Got compute result {response}")
             result = response.cpt.result
             if len(result) == 0:
                 continue
@@ -156,14 +153,10 @@ class TrackTask(Task):
             box = None
             # Return the first instance found of the target class
             for det in detections:
-                #if det["class"] == 'bench':# and det["hsv_filter"]:
-                #    box = det["box"]
-                #    last_seen = time.time()
-                #    break
-                logger.info(f"Now following {det['class']}")
-                box = det["box"]
-                last_seen = time.time()
-                break
+                if det["class"] == target: #and det["hsv_filter"]:
+                    box = det["box"]
+                    last_seen = time.time()
+                    break
 
             # Found an instance of target, start tracking!
             if box is not None:
@@ -184,7 +177,6 @@ class TrackTask(Task):
                         await self.actuate(follow_vel, yaw_vel, gimbal_offset, orbit_speed, 0.0)
                 except Exception as e:
                     logger.error(f"Failed to actuate, reason: {e}")
-                logger.info("Successfully actuated")
 
             await asyncio.sleep(0.05)
 
