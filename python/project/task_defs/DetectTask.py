@@ -56,7 +56,7 @@ class DetectTask(Task):
         model = self.task_attributes["model"]
         lower_bound = self.task_attributes["lower_bound"]
         upper_bound = self.task_attributes["upper_bound"]
-        self.control.configure_compute(model, lower_bound, upper_bound)
+        await self.control.configure_compute(model, lower_bound, upper_bound)
         self.create_transition()
         # try:
         logger.info(f"**************Detect Task {self.task_id}: hi this is detect task {self.task_id}**************\n")
