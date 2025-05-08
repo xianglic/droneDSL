@@ -60,16 +60,22 @@ class DetectTask(Task):
         self.create_transition()
         # try:
         logger.info(f"**************Detect Task {self.task_id}: hi this is detect task {self.task_id}**************\n")
-        coords = ast.literal_eval(self.task_attributes["coords"])
-        await self.control.setGimbalPose(0.0, float(self.task_attributes["gimbal_pitch"]), 0.0)
-        for dest in coords:
-            lng = dest["lng"]
-            lat = dest["lat"]
-            alt = dest["alt"]
-            logger.info(f"**************Detect Task {self.task_id}: Move **************\n")
-            logger.info(f"**************Detect Task {self.task_id}: move to {lat}, {lng}, {alt}**************\n")
-            await self.control.moveTo(lat, lng, alt)
-            await asyncio.sleep(1)
+        # coords = ast.literal_eval(self.task_attributes["coords"])
+        reply = await self.control.send_notificatiion("start")
+        logger.info("waypoints reply")
+
+        while True:
+            logger.info(f"reply: {reply}")
+
+        # await self.control.setGimbalPose(0.0, float(self.task_attributes["gimbal_pitch"]), 0.0)
+        # for dest in coords:
+        #     lng = dest["lng"]
+        #     lat = dest["lat"]
+        #     alt = dest["alt"]
+        #     logger.info(f"**************Detect Task {self.task_id}: Move **************\n")
+        #     logger.info(f"**************Detect Task {self.task_id}: move to {lat}, {lng}, {alt}**************\n")
+        #     await self.control.moveTo(lat, lng, alt)
+        #     await asyncio.sleep(1)
 
         logger.info(f"**************Detect Task {self.task_id}: Done**************\n")
 
