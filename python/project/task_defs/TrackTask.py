@@ -113,13 +113,14 @@ class TrackTask(Task):
         upper_bound = self.task_attributes["upper_bound"]
         await self.control.configure_compute(model, lower_bound, upper_bound)
 
+        # get the task attributes
         target = self.task_attributes["class"]
-        altitude = 5
-        descent_speed = 5
-        orbit_speed = 1
-        follow_speed = 1
-        yaw_speed = 100
-        gimbal_offset = 0
+        altitude = self.task_attributes["altitude"]
+        descent_speed = self.task_attributes["descent_speed"]
+        orbit_speed = self.task_attributes["orbit_speed"]
+        follow_speed = self.task_attributes["follow_speed"]
+        yaw_speed = self.task_attributes["yaw_speed"]
+        gimbal_offset = self.task_attributes["gimbal_offset"]
 
         self.create_transition()
         last_seen = None
