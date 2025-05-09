@@ -177,6 +177,8 @@ class TrackTask(Task):
                         await self.actuate(follow_vel, yaw_vel, gimbal_offset, orbit_speed, 0.0)
                 except Exception as e:
                     logger.error(f"Failed to actuate, reason: {e}")
+            else:
+                await self.actuate(0, 0, 0, 0, 0)
 
             await asyncio.sleep(0.05)
 

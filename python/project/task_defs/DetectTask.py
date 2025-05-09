@@ -57,11 +57,15 @@ class DetectTask(Task):
         lower_bound = self.task_attributes["lower_bound"]
         upper_bound = self.task_attributes["upper_bound"]
         await self.control.configure_compute(model, lower_bound, upper_bound)
-        self.create_transition()
+        logger.info("Finished configuring compute")
+        #self.create_transition()
+        logger.info(f"Done creating transition; {self.task_attributes}")
         # try:
         logger.info(f"**************Detect Task {self.task_id}: hi this is detect task {self.task_id}**************\n")
+
+        logger.info("Sending notification")
         # coords = ast.literal_eval(self.task_attributes["coords"])
-        reply = await self.control.send_notificatiion("start")
+        reply = await self.control.send_notification("start")
         logger.info("waypoints reply")
 
         while True:
