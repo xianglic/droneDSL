@@ -15,13 +15,13 @@ import org.droneDSL.compile.psi.StreamReporter;
 import picocli.CommandLine;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -76,16 +76,6 @@ public class Compiler implements Runnable {
 
   @Override
   public void run() {
-    // preprocess - partition waypoints
-    Partition partitionAlgo = getPartitionAlgo(PartitionConfig);
-    Map<String, GeoPoints> rawGeoPointsMap = WaypointsUtils.parseKMLFile(KMLFilePath);
-    var wayPointsMap = getPartitionedGeoPointsMap(partitionAlgo, rawGeoPointsMap);
-    try {
-      writeToJsonFile(wayPointsMap, WayPointsMapPath);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-
     // parse DSL
     String fileContent;
     try {
@@ -107,6 +97,16 @@ public class Compiler implements Runnable {
 
   private void compile(MissionPlan mission) {
 
+    // preprocess - partition waypoints
+    Partition partitionAlgo = getPartitionAlgo(PartitionConfig);
+    Map<String, GeoPoints> rawGeoPointsMap = WaypointsUtils.parseKMLFile(KMLFilePath);
+    var wayPointsMap = getPartitionedGeoPointsMap(partitionAlgo, rawGeoPointsMap);
+    try {
+      writeToJsonFile(wayPointsMap, WayPointsMapPath);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+
     //code gen
     var platformPath = Platform;
     try {
@@ -127,14 +127,31 @@ public class Compiler implements Runnable {
 
     // zip
     try {
-      FileOutputStream fos = new FileOutputStream(String.format(OutputFilePath + ".ms"));
-      ZipOutputStream zos = new ZipOutputStream(fos);
-      // add to the zip file
-      addToZipFile(platformPath, "", zos);
-      zos.close();
-      fos.close();
+        FileOutputStream fos = new FileOutputStream(String.format(OutputFilePath + ".ms"));
+        ZipOutputStream zos = new ZipOutputStream(fos);
+
+        // Add platform directory to zip
+        addToZipFile(platformPath, "", zos);
+
+        // Add WayPointsMapPath JSON file to zip
+        File waypointsFile = new File(WayPointsMapPath);
+        try (FileInputStream fis = new FileInputStream(waypointsFile)) {
+            ZipEntry zipEntry = new ZipEntry(waypointsFile.getName());
+            zos.putNextEntry(zipEntry);
+
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = fis.read(buffer)) >= 0) {
+                zos.write(buffer, 0, length);
+            }
+
+            zos.closeEntry();
+        }
+
+        zos.close();
+        fos.close();
     } catch (IOException e) {
-      e.printStackTrace();
+        e.printStackTrace();
     }
   }
 

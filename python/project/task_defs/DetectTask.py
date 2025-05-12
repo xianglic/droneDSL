@@ -50,6 +50,12 @@ class DetectTask(Task):
             hsv.daemon = True
             hsv.start()
 
+    async def report(self, msg):
+        reply = await self.control['report'].send_notification(msg)
+        self.running_flag = reply['status']
+        self.patrol_areas = reply['patrol_areas']
+        self.altitude = reply['altitude']
+        
     @Task.call_after_exit
     async def run(self):
         # init the data
@@ -64,38 +70,23 @@ class DetectTask(Task):
         logger.info(f"**************Detect Task {self.task_id}: hi this is detect task {self.task_id}**************\n")
 
         logger.info("Sending notification")
-        # coords = ast.literal_eval(self.task_attributes["coords"])
-        reply = await self.control['report'].send_notification("start")
+        await self.report("start")
         
-        running_flag = reply['status']
-        patrol_areas = reply['patrol_areas']
-        altitude = reply['altitude']
-        
-        logger.info(f"**************Detect Task {self.task_id}: running_flag: {running_flag}**************\n")
-        while running_flag == "running":
+        logger.info(f"**************Detect Task {self.task_id}: running_flag: {self.running_flag}**************\n")
+        while self.running_flag == "running":
             #await self.control.setGimbalPose(0.0, float(self.task_attributes["gimbal_pitch"]), 0.0)
-            for  area in patrol_areas:
+            for  area in self.patrol_areas:
                 logger.info(f"**************Detect Task {self.task_id}: patrol area: {area}**************\n")
                 coords = self.control['report'].get_waypoints(area)
                 for dest in coords:
                     lng = dest["lng"]
                     lat = dest["lat"]
-                    alt = altitude
+                    alt = self.altitude
                 logger.info(f"**************Detect Task {self.task_id}: move to {lat}, {lng}, {alt}**************\n")
                 await self.control['ctrl'].set_gps_location(lat, lng, alt)
                 await asyncio.sleep(1)
-        while True:
-            logger.info(f"reply: {reply}")
-
-        # await self.control.setGimbalPose(0.0, float(self.task_attributes["gimbal_pitch"]), 0.0)
-        # for dest in coords:
-        #     lng = dest["lng"]
-        #     lat = dest["lat"]
-        #     alt = dest["alt"]
-        #     logger.info(f"**************Detect Task {self.task_id}: Move **************\n")
-        #     logger.info(f"**************Detect Task {self.task_id}: move to {lat}, {lng}, {alt}**************\n")
-        #     await self.control.moveTo(lat, lng, alt)
-        #     await asyncio.sleep(1)
+                
+            await self.report("finish")
 
         logger.info(f"**************Detect Task {self.task_id}: Done**************\n")
 

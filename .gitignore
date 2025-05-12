@@ -37,6 +37,7 @@ python/project/requirements.txt
 *.kml
 *.ms
 *.json
+*.class
 
 *swp
 *~
