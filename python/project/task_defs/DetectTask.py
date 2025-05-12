@@ -56,7 +56,7 @@ class DetectTask(Task):
         model = self.task_attributes["model"]
         lower_bound = self.task_attributes["lower_bound"]
         upper_bound = self.task_attributes["upper_bound"]
-        await self.control.configure_compute(model, lower_bound, upper_bound)
+        await self.control['ctrl'].configure_compute(model, lower_bound, upper_bound)
         logger.info("Finished configuring compute")
         #self.create_transition()
         logger.info(f"Done creating transition; {self.task_attributes}")
@@ -65,9 +65,25 @@ class DetectTask(Task):
 
         logger.info("Sending notification")
         # coords = ast.literal_eval(self.task_attributes["coords"])
-        reply = await self.control.send_notification("start")
-        logger.info("waypoints reply")
-
+        reply = await self.control['report'].send_notification("start")
+        
+        running_flag = reply['status']
+        patrol_areas = reply['patrol_areas']
+        altitude = reply['altitude']
+        
+        logger.info(f"**************Detect Task {self.task_id}: running_flag: {running_flag}**************\n")
+        while running_flag == "running":
+            #await self.control.setGimbalPose(0.0, float(self.task_attributes["gimbal_pitch"]), 0.0)
+            for  area in patrol_areas:
+                logger.info(f"**************Detect Task {self.task_id}: patrol area: {area}**************\n")
+                coords = self.control['report'].get_waypoints(area)
+                for dest in coords:
+                    lng = dest["lng"]
+                    lat = dest["lat"]
+                    alt = altitude
+                logger.info(f"**************Detect Task {self.task_id}: move to {lat}, {lng}, {alt}**************\n")
+                await self.control['ctrl'].set_gps_location(lat, lng, alt)
+                await asyncio.sleep(1)
         while True:
             logger.info(f"reply: {reply}")
 
