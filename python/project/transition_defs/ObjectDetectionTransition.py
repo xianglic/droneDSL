@@ -16,7 +16,6 @@ class ObjectDetectionTransition(Transition):
     async def run(self):
         # Non-blocking startup delay
         await asyncio.sleep(4)
-
         while not self._stop_event.is_set():
             logger.debug(f"Task {self.task_id}: Running object detection transition...")
             result = await self.data.get_compute_result("openscout-object")
