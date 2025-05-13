@@ -13,7 +13,6 @@ public class TrackTask extends Task {
   public float orbit_speed;
   public float follow_speed;
   public float yaw_speed;
-  public float gimbal_offset;
 
   public TrackTask(
       String taskID,
@@ -26,8 +25,7 @@ public class TrackTask extends Task {
       float descent_speed,
       float orbit_speed,
       float follow_speed,
-      float yaw_speed,
-      float gimbal_offset
+      float yaw_speed
   ) {
     super(taskID);
     this.gimbalPitch = gimbalPitch;
@@ -40,7 +38,6 @@ public class TrackTask extends Task {
     this.orbit_speed = orbit_speed;
     this.follow_speed = follow_speed;
     this.yaw_speed = yaw_speed;
-    this.gimbal_offset = gimbal_offset;
   }
 
   @Override
@@ -54,7 +51,6 @@ public class TrackTask extends Task {
     System.out.println("orbit_speed :" + orbit_speed);
     System.out.println("follow_speed :" + follow_speed);
     System.out.println("yaw_speed :" + yaw_speed);
-    System.out.println("gimbal_offset :" + gimbal_offset);
   }
 
   @Override
@@ -72,7 +68,6 @@ public class TrackTask extends Task {
                 task_attr_%s["orbit_speed"] = %s
                 task_attr_%s["follow_speed"] = %s
                 task_attr_%s["yaw_speed"] = %s
-                task_attr_%s["gimbal_offset"] = %s
         """.formatted(
         taskID, taskID,
         taskID, model,
@@ -84,8 +79,7 @@ public class TrackTask extends Task {
         taskID, descent_speed,
         taskID, orbit_speed,
         taskID, follow_speed,
-        taskID, yaw_speed,
-        taskID, gimbal_offset
+        taskID, yaw_speed
     ) + this.generateTaskTransCode() + """
                 task_arg_map["%s"] = TaskArguments(TaskType.Track, transition_attr_%s, task_attr_%s)
         """.formatted(taskID, taskID, taskID);

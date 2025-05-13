@@ -87,7 +87,6 @@ public interface Parse {
         var orbit_speed = attrMap.get("orbit_speed").child(BotPsiElementTypes.NUMBER).tokenText();
         var follow_speed = attrMap.get("follow_speed").child(BotPsiElementTypes.NUMBER).tokenText();
         var yaw_speed = attrMap.get("yaw_speed").child(BotPsiElementTypes.NUMBER).tokenText();
-        var gimbal_offset = attrMap.get("gimbal_offset").child(BotPsiElementTypes.NUMBER).tokenText();
 
         // construct new task
         var trackTask = new TrackTask(
@@ -101,8 +100,7 @@ public interface Parse {
             descent_speed.toFloat(),
             orbit_speed.toFloat(),
             follow_speed.toFloat(),
-            yaw_speed.toFloat(),
-            gimbal_offset.toFloat()
+            yaw_speed.toFloat()
         );
         yield Tuple.of(taskID, trackTask);
       }
