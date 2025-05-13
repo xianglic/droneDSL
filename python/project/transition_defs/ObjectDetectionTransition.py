@@ -22,6 +22,7 @@ class ObjectDetectionTransition(Transition):
             result = await self.data.get_compute_result("openscout-object")
             # assume always get the first compute module result
             try: 
+                logger.info(f"Task {self.task_id}: Result: {result=}")
                 detections = json.loads(result[0])
             except json.JSONDecodeError as e:
                 logger.error(f"JSON decode error: {e}")
