@@ -12,9 +12,10 @@ class ObjectDetectionTransition(Transition):
         self.target = target
         self.data = data
 
-    @auto_register_unregister
+    # @auto_register_unregister
     async def run(self):
         # Non-blocking startup delay
+        self._register()
         await asyncio.sleep(4)
 
         while not self._stop_event.is_set():
@@ -39,3 +40,4 @@ class ObjectDetectionTransition(Transition):
                     return
                 
             await asyncio.sleep(0.1)  # Yield to event loop
+        self._unregister()
