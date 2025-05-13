@@ -49,7 +49,8 @@ class Task(ABC):
     async def stop_trans(self):
         logger.info(f"**************Stopping transitions for task {self.task_id}**************")
         async with self.trans_active_lock:
-            await asyncio.gather(*(t.stop() for t in self.trans_active if t.is_alive()))
+            trans_copy = list(self.trans_active)
+        await asyncio.gather(*(t.stop() for t in trans_copy if t.is_alive()))
         logger.info(f"**************All transitions stopped for task {self.task_id}**************")
 
     @classmethod
