@@ -5,6 +5,7 @@ import time
 from venv import logger
 from interface.Transition import Transition
 from gabriel_protocol import gabriel_pb2
+import dataplane_pb2 as dataplane
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -15,25 +16,27 @@ class ObjectDetectionTransition(Transition):
         self.stop_signal = False
         self.target =target
         self.data = data
-        
+
     def stop(self):
         self.stop_signal = True
-    
-    def run(self):
+
+    async def run(self):
         self._register()
         time.sleep(4)
-        self.data.clear_compute_result("openscout-object")
+        #self.data.clear_compute_result("openscout-object")
         while not self.stop_signal:
             # get result
-            result = self.data.get_compute_result("openscout-object")
+            result = await self.data.get_compute_result("openscout-object")
             if (result != None):
                 logger.info(f"**************Transition:  Task {self.task_id}: detected payload! {result}**************\n")
                 try:
-                    # Decode the payload from bytes to string
-                    json_string = result
+                    resp = dataplane.Response()
+                    resp.ParseFromString(result)
+
+                    dets = resp.cpt.generic_result
 
                     # Parse the JSON string
-                    json_data = json.loads(json_string)
+                    json_data = json.loads(dets)
 
                     # Access the 'class' attribute
                     class_attribute = json_data[0]['class']  # Adjust the indexing based on your JSON structure
@@ -47,7 +50,7 @@ class ObjectDetectionTransition(Transition):
                     logger.error(f'Error decoding json: {json_string}')
                 except Exception as e:
                     logger.info(e)
-        # print("object stopping...\n")          
+        # print("object stopping...\n")
         self._unregister()
-  
-    
+
+

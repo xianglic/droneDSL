@@ -98,12 +98,12 @@ class TrackTask(Task):
         return np.clip(value, minimum, maximum)
 
     async def actuate(self, follow_vel, yaw_vel,\
-            gimbal_offset, orbit_speed, descent_speed):
+            gimbal_error, orbit_speed, descent_speed):
         telemetry = await self.data.get_telemetry()
         prev_gimbal = telemetry["gimbal_pose"]["pitch"]
-        await self.control.set_velocity_body(follow_vel, orbit_speed, -1 * descent_speed, yaw_vel)
-        await self.control.set_gimbal_pose(gimbal_offset + prev_gimbal, 0.0, 0.0)
-    
+        await self.control['ctrl'].set_velocity_body(follow_vel, orbit_speed, -1 * descent_speed, yaw_vel)
+        await self.control['ctrl'].set_gimbal_pose((gimbal_error * 0.5) + prev_gimbal, 0.0, 0.0)
+
     ''' Main Logic '''
     @Task.call_after_exit
     async def run(self):
@@ -111,7 +111,7 @@ class TrackTask(Task):
         model = self.task_attributes["model"]
         lower_bound = self.task_attributes["lower_bound"]
         upper_bound = self.task_attributes["upper_bound"]
-        await self.control.configure_compute(model, lower_bound, upper_bound)
+        await self.control['ctrl'].configure_compute(model, lower_bound, upper_bound)
 
         # get the task attributes
         logger.info(''f"Starting track task with attributes: {self.task_attributes}")
@@ -170,11 +170,11 @@ class TrackTask(Task):
                 except Exception as e:
                     logger.error(f"Failed to clamp, reason: {e}")
                 try:
-                    logger.info(f"forward {follow_vel}, yaw {yaw_vel}, gimbal {gimbal_offset}, orbit {orbit_speed} descent {descent_speed}")
+                    logger.info(f"forward {follow_vel}, yaw {yaw_vel}, gimbal {gimbal_error}, orbit {orbit_speed} descent {descent_speed}")
                     if not descended:
-                        await self.actuate(0.0, yaw_vel, gimbal_offset, 0.0, descent_speed)
+                        await self.actuate(0.0, yaw_vel, gimbal_error, 0.0, descent_speed)
                     else:
-                        await self.actuate(follow_vel, yaw_vel, gimbal_offset, orbit_speed, 0.0)
+                        await self.actuate(follow_vel, yaw_vel, gimbal_error, orbit_speed, 0.0)
                 except Exception as e:
                     logger.error(f"Failed to actuate, reason: {e}")
             else:
