@@ -133,7 +133,7 @@ class TrackTask(Task):
             if len(detections) == 0:
                 continue
 
-            logger.info(f"{detections=}")
+            logger.debug(f"{detections=}")
             if last_seen is not None and \
                     int(time.time() - last_seen)  > self.target_lost_duration:
                 # If we have not found the target in N seconds trigger the done transition
