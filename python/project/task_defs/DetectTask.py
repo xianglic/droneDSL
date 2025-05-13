@@ -20,7 +20,7 @@ class DetectTask(Task):
 
     async def create_transition(self):
         logger.info(f"**************Detect Task {self.task_id}: creating transition! **************\n")
-        logger.info(self.transitions_attributes)
+        logger.info(f"**************Detect Task {self.task_id}: transition attributes: {self.transitions_attributes}**************\n")
         args = {
             'task_id': self.task_id,
             'trans_active': self.trans_active,
@@ -43,6 +43,7 @@ class DetectTask(Task):
             if rel_alt > altitude:
                 break
             await self.control['ctrl'].set_velocity_body(0.0, 0.0, 1.0, 0.0)
+            await asyncio.sleep(1)
         logger.info(f"**************Detect Task {self.task_id}: elevate done! **************\n")
         
     async def prepatrol(self, elevation_alt):
