@@ -20,26 +20,22 @@ class ObjectDetectionTransition(Transition):
         while not self._stop_event.is_set():
             logger.debug(f"Task {self.task_id}: Running object detection transition...")
             result = await self.data.get_compute_result("openscout-object")
-            # assume always get the first compute module result
-            try: 
-                logger.info(f"Task {self.task_id}: Result: {result=}")
-                detections = json.loads(result[0])
-            except json.JSONDecodeError as e:
-                logger.error(f"JSON decode error: {e}")
-                
-            try:
-                if len(detections) == 0:
-                    continue
-                logger.info(f"Task {self.task_id}: Detected payload: {detections=}")
-                
-                for detection in detections:
-                    class_attribute = detection.get('class')
-                    if class_attribute == self.target:
-                        logger.info(f"Task {self.task_id}: Target matched! {class_attribute}")
-                        await self._trigger_event("object_detection")
-                        return
-
-            except Exception as e:
-                logger.error(f"Unexpected error in detection: {e}")
+            if len(result) == 0:
+                logger.info(f"Task {self.task_id}: No result from compute engine")
+                continue
+            
+            # assume always use the first compute module result
+            detections = json.loads(result[0])
+            if len(detections) == 0:
+                logger.info(f"Task {self.task_id}: No result from compute engine bc of the GeoFence")
+                continue
+            
+            logger.info(f"Task {self.task_id}: Detected payload: {detections=}")
+            for detection in detections:
+                class_attribute = detection.get('class')
+                if class_attribute == self.target:
+                    logger.info(f"Task {self.task_id}: Target matched! {class_attribute}")
+                    await self._trigger_event("object_detection")
+                    return
                 
             await asyncio.sleep(0.1)  # Yield to event loop

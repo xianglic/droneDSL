@@ -128,9 +128,14 @@ class TrackTask(Task):
         logger.info(f"Starting track task loop")
         while True:
             result = await self.data.get_compute_result("openscout-object")
+            if len(result) == 0:
+                logger.info(f"Task {self.task_id}: No result from compute engine")
+                continue
+            
             # assume always use the first compute module result
             detections = json.loads(result[0])
             if len(detections) == 0:
+                logger.info(f"Task {self.task_id}: No result from compute engine bc of the GeoFence")
                 continue
 
             logger.debug(f"{detections=}")
