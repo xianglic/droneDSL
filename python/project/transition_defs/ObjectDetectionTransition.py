@@ -20,20 +20,22 @@ class ObjectDetectionTransition(Transition):
         while not self._stop_event.is_set():
             result = await self.data.get_compute_result("openscout-object")
             # assume always get the first compute module result
-	    detections = json.loads(result[0])
-            if len(detections) == 0:
-		continue
-            logger.info(f"Task {self.task_id}: Detected payload: {detections=}")
-            
-	    class_attribute = detections[0].get('class')
-            logger.info(f"Detected class: {class_attribute}")
-            if class_attribute == self.target:
-                logger.info(f"Task {self.task_id}: Target matched! {class_attribute}")
-                await self._trigger_event("object_detection")
-                break
+            try: 
+                detections = json.loads(result[0])
+                if len(detections) == 0:
+                    continue
+                logger.info(f"Task {self.task_id}: Detected payload: {detections=}")
+                
+                for detection in detections:
+                    class_attribute = detection.get('class')
+                    if class_attribute == self.target:
+                        logger.info(f"Task {self.task_id}: Target matched! {class_attribute}")
+                        await self._trigger_event("object_detection")
+                        return
 
-                except json.JSONDecodeError as e:
-                    logger.error(f"JSON decode error: {e}")
-                except Exception as e:
-                    logger.error(f"Unexpected error in detection: {e}")
+            except json.JSONDecodeError as e:
+                logger.error(f"JSON decode error: {e}")
+            except Exception as e:
+                logger.error(f"Unexpected error in detection: {e}")
+                
             await asyncio.sleep(0.1)  # Yield to event loop
