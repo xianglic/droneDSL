@@ -74,7 +74,7 @@ class DetectTask(Task):
         
         logger.info("Sending notification")
         await self.report("start")
-        await self.prepatrol(self.altitude)
+        # await self.prepatrol(self.altitude)
         
         logger.info(f"**************Detect Task {self.task_id}: running_flag: {self.running_flag}**************\n")
         while self.running_flag == "running":
@@ -88,11 +88,11 @@ class DetectTask(Task):
                     logger.info(f"**************Detect Task {self.task_id}: move to {lat}, {lng}, {alt}**************\n")
                     await self.control['ctrl'].set_gps_location(lat, lng, alt)
                     
-                    # create the transition after the first waypoint
-                    if (self.first_wp_flag):
-                        await self.control['ctrl'].clear_compute_result("object_detection")
-                        await self.create_transition()
-                        self.first_wp_flag = False
+                    # # create the transition after the first waypoint
+                    # if (self.first_wp_flag):
+                    #     await self.control['ctrl'].clear_compute_result("object_detection")
+                    #     await self.create_transition()
+                    #     self.first_wp_flag = False
                         
                     await asyncio.sleep(1)
             await self.report("finish")
