@@ -31,6 +31,7 @@ class Transition(ABC):
         logger.info(f"Stopping transition: {self.__class__.__name__}")
         self._stop_event.set()
         if self._task:
+            logger.info(f"Waiting for transition {self.__class__.__name__} to finish...")
             await self._task
         logger.info(f"Transition {self.__class__.__name__} stopped.")
 
