@@ -121,19 +121,17 @@ class TrackTask(Task):
         orbit_speed = self.task_attributes["orbit_speed"]
         follow_speed = self.task_attributes["follow_speed"]
         yaw_speed = self.task_attributes["yaw_speed"]
-        gimbal_offset = self.task_attributes["gimbal_offset"]
 
         self.create_transition()
         last_seen = None
         descended = False
         logger.info(f"Starting track task loop")
         while True:
-            response = await self.data.get_compute_result("openscout-object")
-            result = response.cpt.result
+            result = await self.data.get_compute_result("openscout-object")
             if len(result) == 0:
                 continue
 
-            detections = result[0].generic_result
+            detections = result[0]
             #logger.info(f"{detections=}")
             try:
                 detections = json.loads(detections)
