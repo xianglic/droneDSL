@@ -23,6 +23,10 @@ class ObjectDetectionTransition(Transition):
             # assume always get the first compute module result
             try: 
                 detections = json.loads(result[0])
+            except json.JSONDecodeError as e:
+                logger.error(f"JSON decode error: {e}")
+                
+            try:
                 if len(detections) == 0:
                     continue
                 logger.info(f"Task {self.task_id}: Detected payload: {detections=}")
@@ -34,8 +38,6 @@ class ObjectDetectionTransition(Transition):
                         await self._trigger_event("object_detection")
                         return
 
-            except json.JSONDecodeError as e:
-                logger.error(f"JSON decode error: {e}")
             except Exception as e:
                 logger.error(f"Unexpected error in detection: {e}")
                 
