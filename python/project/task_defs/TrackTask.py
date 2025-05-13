@@ -129,8 +129,8 @@ class TrackTask(Task):
         while True:
             result = await self.data.get_compute_result("openscout-object")
             # assume always use the first compute module result
-	    detections = json.loads(result[0])
-	    if len(detections) == 0:
+            detections = json.loads(result[0])
+	    i   if len(detections) == 0:
                 continue
 
             logger.info(f"{detections=}")
