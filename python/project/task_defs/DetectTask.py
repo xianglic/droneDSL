@@ -37,7 +37,8 @@ class DetectTask(Task):
     async def elevate(self, altitude):
         logger.info(f"**************Detect Task {self.task_id}: elevate to {altitude}**************\n")
         while True:
-            rel_alt = await self.data.get_telemetry()['global_position']['relative_altitude']
+            tel = await self.data.get_telemetry()
+            rel_alt = tel['global_position']['relative_altitude']
             logger.info(f"**************Detect Task {self.task_id}: relative altitude: {rel_alt}**************\n")
             if rel_alt > altitude:
                 break

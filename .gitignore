@@ -41,3 +41,4 @@ python/project/requirements.txt
 
 *swp
 *~
+*.pyc
