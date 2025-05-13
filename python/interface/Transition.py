@@ -32,6 +32,7 @@ class Transition(ABC):
         self._stop_event.set()
         if self._task:
             await self._task
+        logger.info(f"Transition {self.__class__.__name__} stopped.")
 
     def is_alive(self):
         return self._task is not None and not self._task.done()
