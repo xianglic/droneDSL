@@ -1,4 +1,3 @@
-
 from ..transition_defs.ObjectDetectionTransition import ObjectDetectionTransition
 from ..transition_defs.TimerTransition import TimerTransition
 from ..transition_defs.HSVDetectionTransition import HSVDetectionTransition
@@ -18,7 +17,7 @@ class DetectTask(Task):
         super().__init__(control, data, task_id, trigger_event_queue, task_args)
 
 
-    def create_transition(self):
+    async def create_transition(self):
 
         logger.info(f"**************Detect Task {self.task_id}: create transition! **************\n")
         logger.info(self.transitions_attributes)
@@ -29,24 +28,24 @@ class DetectTask(Task):
             'trigger_event_queue': self.trigger_event_queue
         }
 
-        # triggered event
-        if ("timeout" in self.transitions_attributes):
-            logger.info(f"**************Detect Task {self.task_id}:  timer transition! **************\n")
-            timer = TimerTransition(args, self.transitions_attributes["timeout"])
-            timer.daemon = True
-            timer.start()
+        ## triggered event
+        #if ("timeout" in self.transitions_attributes):
+        #    logger.info(f"**************Detect Task {self.task_id}:  timer transition! **************\n")
+        #    timer = TimerTransition(args, self.transitions_attributes["timeout"])
+        #    timer.daemon = True
+        #    timer.start()
 
         if ("object_detection" in self.transitions_attributes):
             logger.info(f"**************Detect Task {self.task_id}:  object detection transition! **************\n")
             object_trans = ObjectDetectionTransition(args, self.transitions_attributes["object_detection"], self.data)
             object_trans.daemon = True
-            object_trans.start()
+            await object_trans.start()
 
-        if ("hsv_detection" in self.transitions_attributes):
-            logger.info(f"**************Detect Task {self.task_id}:  hsv detection transition! **************\n")
-            hsv = HSVDetectionTransition(args, self.transitions_attributes["hsv_detection"], self.data)
-            hsv.daemon = True
-            hsv.start()
+        #if ("hsv_detection" in self.transitions_attributes):
+        #    logger.info(f"**************Detect Task {self.task_id}:  hsv detection transition! **************\n")
+        #    hsv = HSVDetectionTransition(args, self.transitions_attributes["hsv_detection"], self.data)
+        #    hsv.daemon = True
+        #    hsv.start()
 
     async def report(self, msg):
         reply = await self.control['report'].send_notification(msg)
@@ -62,7 +61,7 @@ class DetectTask(Task):
         upper_bound = self.task_attributes["upper_bound"]
         await self.control['ctrl'].configure_compute(model, lower_bound, upper_bound)
         logger.info("Finished configuring compute")
-        self.create_transition()
+        await self.create_transition()
         logger.info(f"Done creating transition; {self.task_attributes}")
         # try:
         logger.info(f"**************Detect Task {self.task_id}: hi this is detect task {self.task_id}**************\n")

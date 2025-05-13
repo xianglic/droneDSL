@@ -128,16 +128,12 @@ class TrackTask(Task):
         logger.info(f"Starting track task loop")
         while True:
             result = await self.data.get_compute_result("openscout-object")
-            if len(result) == 0:
+            # assume always use the first compute module result
+	    detections = json.loads(result[0])
+	    if len(detections) == 0:
                 continue
 
-            detections = result[0]
-            #logger.info(f"{detections=}")
-            try:
-                detections = json.loads(detections)
-            except Exception as e:
-                logger.error(e)
-                raise
+            logger.info(f"{detections=}")
             if last_seen is not None and \
                     int(time.time() - last_seen)  > self.target_lost_duration:
                 # If we have not found the target in N seconds trigger the done transition
