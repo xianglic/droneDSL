@@ -97,8 +97,8 @@ class TrackTask(Task):
     def clamp(self, value, minimum, maximum):
         return np.clip(value, minimum, maximum)
 
-    async def actuate(self, follow_vel, yaw_vel,\
-            gimbal_error, orbit_speed, descent_speed):
+    async def actuate(
+        self, follow_vel, yaw_vel, gimbal_error, orbit_speed, descent_speed):
         telemetry = await self.data.get_telemetry()
         prev_gimbal = telemetry["gimbal_pose"]["pitch"]
         await self.control['ctrl'].set_velocity_body(follow_vel, orbit_speed, -1 * descent_speed, yaw_vel)
@@ -127,16 +127,10 @@ class TrackTask(Task):
         descended = False
         logger.info(f"Starting track task loop")
         while True:
+            detections = []
             result = await self.data.get_compute_result("openscout-object")
-            if len(result) == 0:
-                logger.info(f"Task {self.task_id}: No result from compute engine")
-                continue
-            
-            # assume always use the first compute module result
-            detections = json.loads(result[0])
-            if len(detections) == 0:
-                logger.info(f"Task {self.task_id}: No result from compute engine bc of the GeoFence")
-                continue
+            if len(result) != 0:
+                detections = json.loads(result[0])
 
             logger.debug(f"{detections=}")
             if last_seen is not None and \
@@ -144,6 +138,7 @@ class TrackTask(Task):
                 # If we have not found the target in N seconds trigger the done transition
                 logger.info(f"Breaking; {self.target_lost_duration=} {last_seen=} {time.time()=}")
                 break
+
             telemetry = await self.data.get_telemetry()
             global_pos = telemetry["global_position"]
             if global_pos["relative_altitude"] <= altitude:
@@ -159,6 +154,7 @@ class TrackTask(Task):
 
             # Found an instance of target, start tracking!
             if box is not None:
+                await self.control['ctrl'].clear_compute_result("openscout-object")
                 try:
                     follow_error, yaw_error, gimbal_error = await self.error(box)
                 except Exception as e:
