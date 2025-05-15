@@ -21,7 +21,7 @@ class TrackTask(Task):
         self.pixel_center = (self.image_res[0] / 2, self.image_res[1] / 2)
         self.HFOV = 69
         self.VFOV = 43
-        self.target_lost_duration = 10
+        self.target_lost_duration = 5
         self.leash_length = 15.0
 
     def create_transition(self):
@@ -107,7 +107,6 @@ class TrackTask(Task):
     ''' Main Logic '''
     @Task.call_after_exit
     async def run(self):
-        await self.control['ctrl'].hover()
         # init the data
         model = self.task_attributes["model"]
         lower_bound = self.task_attributes["lower_bound"]
@@ -137,6 +136,7 @@ class TrackTask(Task):
             if last_seen is not None and \
                     int(time.time() - last_seen)  > self.target_lost_duration:
                 # If we have not found the target in N seconds trigger the done transition
+                await self.actuate(0, 0, 0, 0, 0)
                 logger.info(f"Breaking; {self.target_lost_duration=} {last_seen=} {time.time()=}")
                 break
 
@@ -173,8 +173,6 @@ class TrackTask(Task):
                         await self.actuate(follow_vel, yaw_vel, gimbal_error, orbit_speed, 0.0)
                 except Exception as e:
                     logger.error(f"Failed to actuate, reason: {e}")
-            else:
-                await self.actuate(0, 0, 0, 0, 0)
 
             await asyncio.sleep(0.05)
 
