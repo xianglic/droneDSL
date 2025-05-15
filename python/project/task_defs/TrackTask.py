@@ -155,7 +155,7 @@ class TrackTask(Task):
 
             # Found an instance of target, start tracking!
             if box is not None:
-                await self.control['ctrl'].clear_compute_result("openscout-object")
+                #await self.control['ctrl'].clear_compute_result("openscout-object")
                 try:
                     follow_error, yaw_error, gimbal_error = await self.error(box)
                 except Exception as e:
