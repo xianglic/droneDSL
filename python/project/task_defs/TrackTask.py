@@ -107,6 +107,7 @@ class TrackTask(Task):
     ''' Main Logic '''
     @Task.call_after_exit
     async def run(self):
+        await self.control['ctrl'].hover()
         # init the data
         model = self.task_attributes["model"]
         lower_bound = self.task_attributes["lower_bound"]
