@@ -74,7 +74,7 @@ class DetectTask(Task):
         
         logger.info("Sending notification")
         await self.report("start")
-        await self.prepatrol(self.altitude)
+        await self.prepatrol(self.altitude + 5)
         
         logger.info(f"**************Detect Task {self.task_id}: running_flag: {self.running_flag}**************\n")
         while self.running_flag == "running":
