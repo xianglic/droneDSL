@@ -101,7 +101,7 @@ class TrackTask(Task):
         self, follow_vel, yaw_vel, gimbal_error, orbit_speed, descent_speed):
         telemetry = await self.data.get_telemetry()
         prev_gimbal = telemetry["gimbal_pose"]["pitch"]
-        await self.control['ctrl'].set_velocity_body(follow_vel, orbit_speed, -1 * descent_speed, yaw_vel)
+        await self.control['ctrl'].set_velocity_body(follow_vel, orbit_speed, -1 * descent_speed, yaw_vel * 2.0)
         await self.control['ctrl'].set_gimbal_pose((gimbal_error * 0.5) + prev_gimbal, 0.0, 0.0)
 
     ''' Main Logic '''
