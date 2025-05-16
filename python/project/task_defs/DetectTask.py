@@ -90,7 +90,7 @@ class DetectTask(Task):
                     
                     # create the transition after the first waypoint
                     if (self.first_wp_flag):
-                        await self.control['ctrl'].clear_compute_result("object_detection")
+                        await self.control['ctrl'].clear_compute_result("openscout-object")
                         await self.create_transition()
                         self.first_wp_flag = False
                         
