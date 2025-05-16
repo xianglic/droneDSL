@@ -21,8 +21,8 @@ class TrackTask(Task):
         self.pixel_center = (self.image_res[0] / 2, self.image_res[1] / 2)
         self.HFOV = 69
         self.VFOV = 43
-        self.target_lost_duration = 5
-        self.leash_length = 15.0
+        self.target_lost_duration = 10
+        self.leash_length = 5.0
 
     def create_transition(self):
         args = {
@@ -152,7 +152,7 @@ class TrackTask(Task):
                     box = det["box"]
                     last_seen = time.time()
                     break
-
+                
             # Found an instance of target, start tracking!
             if box is not None:
                 #await self.control['ctrl'].clear_compute_result("openscout-object")
