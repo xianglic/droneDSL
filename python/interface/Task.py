@@ -58,7 +58,11 @@ class Task(ABC):
         @functools.wraps(func)
         async def wrapper(self, *args, **kwargs):
             try:
-                return await func(self, *args, **kwargs)
-            finally:
+                result = await func(self, *args, **kwargs)
                 await self._exit()
+                return result
+            except asyncio.CancelledError:
+                logger.warning(f"**************{self.task_id}: CANCELLED during run **************")
+                # Do not call _exit() → no "done" event
+                raise
         return wrapper

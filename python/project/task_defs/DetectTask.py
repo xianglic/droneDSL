@@ -64,42 +64,39 @@ class DetectTask(Task):
         
     @Task.call_after_exit
     async def run(self):
-        try:
-            logger.info(f"**************Detect Task {self.task_id}: hi this is detect task {self.task_id}**************\n")
-            # init the data
-            model = self.task_attributes["model"]
-            lower_bound = self.task_attributes["lower_bound"]
-            upper_bound = self.task_attributes["upper_bound"]
-            await self.control['ctrl'].configure_compute(model, lower_bound, upper_bound)
-            
-            logger.info("Sending notification")
-            await self.report("start")
-            await self.prepatrol(self.altitude + 5)
-            
-            logger.info(f"**************Detect Task {self.task_id}: running_flag: {self.running_flag}**************\n")
-            while self.running_flag == "running":
-                for  area in self.patrol_areas:
-                    logger.info(f"**************Detect Task {self.task_id}: patrol area: {area}**************\n")
-                    coords = await self.control['report'].get_waypoints(area)
-                    for dest in coords:
-                        lng = dest["lng"]
-                        lat = dest["lat"]
-                        alt = self.altitude
-                        logger.info(f"**************Detect Task {self.task_id}: move to {lat}, {lng}, {alt}**************\n")
-                        await self.control['ctrl'].set_gps_location(lat, lng, alt)
+        logger.info(f"**************Detect Task {self.task_id}: hi this is detect task {self.task_id}**************\n")
+        # init the data
+        model = self.task_attributes["model"]
+        lower_bound = self.task_attributes["lower_bound"]
+        upper_bound = self.task_attributes["upper_bound"]
+        await self.control['ctrl'].configure_compute(model, lower_bound, upper_bound)
+        
+        logger.info("Sending notification")
+        await self.report("start")
+        await self.prepatrol(self.altitude + 5)
+        
+        logger.info(f"**************Detect Task {self.task_id}: running_flag: {self.running_flag}**************\n")
+        while self.running_flag == "running":
+            for  area in self.patrol_areas:
+                logger.info(f"**************Detect Task {self.task_id}: patrol area: {area}**************\n")
+                coords = await self.control['report'].get_waypoints(area)
+                for dest in coords:
+                    lng = dest["lng"]
+                    lat = dest["lat"]
+                    alt = self.altitude
+                    logger.info(f"**************Detect Task {self.task_id}: move to {lat}, {lng}, {alt}**************\n")
+                    await self.control['ctrl'].set_gps_location(lat, lng, alt)
+                    
+                    # create the transition after the first waypoint
+                    if (self.first_wp_flag):
+                        await self.control['ctrl'].clear_compute_result("openscout-object")
+                        await self.create_transition()
+                        self.first_wp_flag = False
                         
-                        # create the transition after the first waypoint
-                        if (self.first_wp_flag):
-                            await self.control['ctrl'].clear_compute_result("openscout-object")
-                            await self.create_transition()
-                            self.first_wp_flag = False
-                            
-                        await asyncio.sleep(1)
-                await self.report("finish")
+                    await asyncio.sleep(1)
+            await self.report("finish")
 
-            logger.info(f"**************Detect Task {self.task_id}: Done**************\n")
-        except asyncio.CancelledError:
-            logger.warning(f"**************Detect Task {self.task_id}: CANCELLED during run **************")
-            raise  # allow task to exit cleanly
+        logger.info(f"**************Detect Task {self.task_id}: Done**************\n")
+
 
 
