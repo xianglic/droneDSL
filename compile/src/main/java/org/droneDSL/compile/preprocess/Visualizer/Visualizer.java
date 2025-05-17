@@ -141,12 +141,12 @@ public class Visualizer extends JPanel implements MouseMotionListener {
   public void mouseDragged(MouseEvent e) {}
 
   public static void main(String[] args) {
-    String kmlPath = "./example/hex.kml";
-    double spacing = 3;
+    String kmlPath = "./example/fieldB.kml";
+    double spacing = 18;
     double angle = 100;
     double trigger = 1;
 
-    Partition partition = new EdgePartition(); // Use SurveyPartition
+    Partition partition = new CorridorPartition(spacing, angle); // Use SurveyPartition
 
     Map<String, GeoPoints> rawGeoPointsMap = WaypointsUtils.parseKMLFile(kmlPath);
     Map<String, List<GeoPoints>> partitionedMap = Compiler.getPartitionedGeoPointsMap(partition, rawGeoPointsMap);
