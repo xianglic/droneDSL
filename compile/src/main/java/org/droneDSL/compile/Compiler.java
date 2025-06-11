@@ -126,32 +126,28 @@ public class Compiler implements Runnable {
     }
 
     // zip
-    try {
-        FileOutputStream fos = new FileOutputStream(String.format(OutputFilePath + ".ms"));
-        ZipOutputStream zos = new ZipOutputStream(fos);
+    try (var fos = new FileOutputStream(String.format(OutputFilePath + ".ms"));
+         var zos = new ZipOutputStream(fos)) {
 
-        // Add platform directory to zip
-        addToZipFile(platformPath, "", zos);
+      // Add platform directory to zip
+      addToZipFile(platformPath, "", zos);
 
-        // Add WayPointsMapPath JSON file to zip
-        File waypointsFile = new File(WayPointsMapPath);
-        try (FileInputStream fis = new FileInputStream(waypointsFile)) {
-            ZipEntry zipEntry = new ZipEntry(waypointsFile.getName());
-            zos.putNextEntry(zipEntry);
+      // Add WayPointsMapPath JSON file to zip
+      File waypointsFile = new File(WayPointsMapPath);
+      try (FileInputStream fis = new FileInputStream(waypointsFile)) {
+        ZipEntry zipEntry = new ZipEntry(waypointsFile.getName());
+        zos.putNextEntry(zipEntry);
 
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = fis.read(buffer)) >= 0) {
-                zos.write(buffer, 0, length);
-            }
-
-            zos.closeEntry();
+        byte[] buffer = new byte[1024];
+        int length;
+        while ((length = fis.read(buffer)) >= 0) {
+          zos.write(buffer, 0, length);
         }
 
-        zos.close();
-        fos.close();
+        zos.closeEntry();
+      }
     } catch (IOException e) {
-        e.printStackTrace();
+      e.printStackTrace();
     }
   }
 
