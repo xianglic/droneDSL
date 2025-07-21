@@ -1,0 +1,37 @@
+DSL:
+
+Compiler:
+    dynamic task
+    code restructuring:
+            Level	Ask This Question	Action in DSL
+        1. Goal-level	Does this field express mission goals?	✅ Expose it
+        2. Control-level	Does this field tune how the drone behaves?	⚠️ Abstract with modes
+        3. Mechanism-level	Does this field configure low-level mechanisms?	❌ Hide or auto-calculate
+
+        allow overrides:
+          track = Track:
+            class  = person
+            model  = coco
+            mode   = aggressive
+
+            advanced:
+                descent_speed = 8
+                yaw_speed     = 120
+
+
+code optimization:
+    python algo: loop unrolling, if condition removing
+    control flow graph
+
+debugger:
+    ideal drone execute engine
+    read the drone cap and registration file
+    compilation checking (static analysis)
+    static + dynamic analysis
+
+LLM training:
+    compiler could report in a way that help llm to understand
+
+
+HCI:
+    graphical representation
